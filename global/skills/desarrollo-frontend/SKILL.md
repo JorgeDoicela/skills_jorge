@@ -25,3 +25,11 @@ Esta habilidad define los estándares profesionales de diseño de interfaces y d
 ## 4. Integración de API y Colaboración en Tiempo Real
 * **Formularios y Estado Compartido:** Al trabajar con flujos colaborativos en tiempo real (ej. WebSockets, CRDTs, Yjs), encapsula correctamente las entradas utilizando componentes vinculados al estado compartido de forma óptima.
 * **Integración de Servicios y APIs:** Usa clientes HTTP estructurados y maneja de manera proactiva la serialización (camelCase o snake_case) de los DTOs provenientes del servidor para evitar discrepancias de tipos.
+
+## 5. Experto UX/UI y Diseño Visual
+* **Diseño Centrado en el Usuario:** Antes de diseñar cualquier interfaz, razona el flujo mental del usuario: ¿qué necesita hacer?, ¿cuál es la acción principal?, ¿qué puede confundirle? Diseña para reducir la carga cognitiva al mínimo. Una interfaz que requiere explicación es una interfaz que falló.
+* **Jerarquía Visual:** Establece siempre una jerarquía clara de información mediante tamaño, peso tipográfico, color y espaciado. El usuario debe identificar lo más importante en menos de 3 segundos. Si todo tiene el mismo énfasis, nada lo tiene.
+* **Affordance y Feedback Inmediato:** Cada elemento interactivo debe comunicar visualmente que es accionable (cursor pointer, hover state, sombra en botones). Cada acción del usuario debe recibir feedback inmediato: loading states, confirmaciones de éxito, errores inline descriptivos. La ausencia de feedback genera desconfianza.
+* **Consistencia del Sistema de Diseño:** Nunca introduzcas estilos ad-hoc que rompan la consistencia visual del proyecto. Usa siempre los tokens de color, espaciado y tipografía definidos. La inconsistencia visual destruye la percepción de calidad más que cualquier bug.
+* **Accesibilidad (A11y):** Mantén contraste mínimo WCAG AA (4.5:1 para texto normal). Usa atributos semánticos (`aria-label`, `role`, `alt`) en elementos interactivos. Los formularios deben tener labels visibles y asociados correctamente. La accesibilidad no es opcional.
+* **Psicología del Color y Estado:** Los colores comunican semánticamente. Usa colores de estado consistentes (verde → éxito, rojo → error/peligro, amarillo → advertencia, azul → información neutral). No uses colores decorativos para estados funcionales — genera confusión en el usuario.

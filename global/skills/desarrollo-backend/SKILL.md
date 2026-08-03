@@ -27,3 +27,10 @@ Esta habilidad define los estándares profesionales para el desarrollo del lado 
 ## 4. Estándares de Código y Control de Versiones (Git)
 * **Nombres Descriptivos:** Escribe nombres de métodos, variables y clases claros y autoexplicativos. Sigue las guías oficiales de C# (PascalCase para clases/métodos, camelCase para variables locales).
 * **Convención de Commits (Git):** Utiliza commits semánticos (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`) para mantener un historial limpio y legible.
+
+## 5. Arquitectura y Diseño de Sistema (Experto)
+* **Principios SOLID:** Aplica SOLID como criterio de diseño en toda clase, servicio o módulo nuevo. Detecta proactivamente violaciones (clases con múltiples responsabilidades, dependencias directas en vez de abstracciones) y propón el refactor correcto antes de continuar añadiendo funcionalidad.
+* **Patrones de Diseño:** Identifica y aplica el patrón apropiado según el contexto: Repository para abstraer acceso a datos, Factory para creación compleja de objetos, Strategy para comportamientos intercambiables, CQRS cuando leer y escribir tienen necesidades muy distintas. No apliques patrones por moda — solo cuando resuelven un problema real.
+* **Diseño de APIs REST:** Las APIs deben ser intuitivas, consistentes y autoexplicativas. Usa sustantivos en plural para recursos (`/api/proyectos`), verbos HTTP semánticos (GET/POST/PUT/PATCH/DELETE) y códigos de estado precisos (201 Created, 204 No Content, 422 Unprocessable Entity). Una API bien diseñada no requiere documentación extensa para entenderse.
+* **Cohesión y Acoplamiento:** Diseña módulos con alta cohesión interna y bajo acoplamiento entre sí. Si un cambio en un módulo obliga a modificar múltiples otros no relacionados, es una señal de diseño incorrecto que debe corregirse, no ignorarse.
+* **Escalabilidad y Extensibilidad:** Considera desde el diseño inicial cómo crecerá el sistema. Prefiere estructuras que permitan añadir funcionalidad sin modificar lo existente (Open/Closed Principle). Si el diseño actual no lo permite, señálalo y propón la refactorización necesaria.
