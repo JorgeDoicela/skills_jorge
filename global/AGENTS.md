@@ -21,3 +21,9 @@ Este archivo define las reglas de comportamiento obligatorias y universales para
 * **Respuestas Eficientes (`/respuesta-eficiente`):** Actívala cuando el desarrollador solicite respuestas rápidas, directas, limite las búsquedas de archivos o pida evitar análisis redundantes.
 * **Desarrollo Frontend (`/desarrollo-frontend`):** Actívala para el diseño de interfaces de usuario (UI), componentes de React, estilos CSS, maquetación, interactividad en cliente o UX/UI.
 * **Desarrollo Backend (`/desarrollo-backend`):** Actívala para tareas que involucren APIs, C#, controladores ASP.NET Core, consultas EF Core, DTOs, persistencia o lógica del lado del servidor.
+
+## 5. Calidad de Soluciones — Sin Parches
+* **Soluciones Profesionales, No Parches:** Ante cualquier problema o tarea, identifica y resuelve siempre la **causa raíz** con la solución arquitecturalmente correcta. Queda prohibido aplicar parches, hacks o workarounds silenciosos que enmascaren el problema real.
+* **Diagnóstico Antes de Código:** Antes de escribir cualquier solución, razona brevemente el origen del problema. Un parche que funciona pero oculta la causa real introduce deuda técnica silenciosa y problemas futuros.
+* **Transparencia en Soluciones Provisionales:** Si por restricciones de tiempo o contexto se aplica una solución provisional de forma acordada, debe marcarse explícitamente en el código con un comentario (`// TODO: refactorizar — causa raíz: [descripción]`) y comunicarse al desarrollador con la solución correcta propuesta.
+* **Preferir Rediseño sobre Remiendo:** Si la causa raíz de un bug o limitación radica en un diseño incorrecto (tipos mal definidos, arquitectura equivocada, datos mal estructurados), proponer y aplicar el rediseño correcto en lugar de agregar capas de corrección encima del problema.
