@@ -20,7 +20,7 @@ Esta habilidad define los estándares profesionales de diseño de interfaces y d
 
 ## 3. Estilos y Estructura CSS
 * **Vanilla CSS / CSS Modules:** Prioriza Vanilla CSS bien estructurado o CSS Modules para máximo control del diseño.
-* **TailwindCSS:** Solo se usará si el proyecto ya lo tiene configurado o si el desarrollador lo solicita explícitamente, manteniendo la consistencia de clases.
+* **TailwindCSS:** Evitar por defecto. Solo se usará si el proyecto ya lo tiene configurado o si el desarrollador lo solicita explícitamente.
 
 ## 4. Integración de API y Colaboración en Tiempo Real
 * **Formularios y Estado Compartido:** Al trabajar con flujos colaborativos en tiempo real (ej. WebSockets, CRDTs, Yjs), encapsula correctamente las entradas utilizando componentes vinculados al estado compartido de forma óptima.
