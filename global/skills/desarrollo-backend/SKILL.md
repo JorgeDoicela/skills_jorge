@@ -18,7 +18,7 @@ Esta habilidad define los estándares profesionales para el desarrollo del lado 
 * **Gobernanza y Convenciones de Base de Datos:**
   - **Tablas del Módulo de Negocio (Escritura):** Al crear nuevas tablas de base de datos o migraciones locales del dominio del proyecto, mantén la convención de nomenclaturas (como prefijos de módulo o snake_case) e integridad de llaves foráneas e índices de forma rigurosa y uniforme.
   - **Tablas Institucionales Externas (Solo Lectura):** Identifica y clasifica los esquemas de bases de datos compartidos o sistemas externos legados. Estos registros deben consultarse de forma estrictamente de **solo lectura**, previniendo operaciones de escritura accidentales.
-* **Seguridad en Scripts SQL:** Cualquier script de alteración (`UPDATE`, `DELETE`, `DROP`) o semilla (`seed`) debe incluir cláusulas seguras, deshabilitar llaves foráneas solo temporalmente (`SET FOREIGN_KEY_CHECKS = 0;`) y restaurarlas al finalizar (`SET FOREIGN_KEY_CHECKS = 1;`).
+* **Seguridad en Scripts SQL:** Cualquier script de alteración (`UPDATE`, `DELETE`, `DROP`) o semilla (`seed`) debe incluir cláusulas `WHERE` seguras y explícitas. Si se requiere deshabilitar restricciones de integridad temporalmente (ej: llaves foráneas), hazlo solo en el bloque necesario y restáuralas inmediatamente al finalizar.
 
 ## 3. Manejo de Errores y Registro (Logging)
 * **Manejo Global de Excepciones:** Prefiere middlewares globales o filtros de excepción para capturar errores del servidor y devolver respuestas JSON estándar (ej: `{ "message": "Error description" }`), evitando bloques `try-catch` repetitivos en los controladores.
