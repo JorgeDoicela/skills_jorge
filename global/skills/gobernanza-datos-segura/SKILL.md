@@ -1,21 +1,36 @@
 ---
 name: gobernanza-datos-segura
-description: Activa esta skill para asegurar que el agente nunca modifique contraseñas, credenciales, registros de auditoría, correos o configuraciones de seguridad en bases de datos o archivos sin consentimiento explícito y aprobación del usuario. Evita atajos destructivos durante fases de testeo o automatización.
+description: Activa esta skill para evitar que el agente modifique contraseñas, credenciales, permisos o configuraciones de seguridad en bases de datos o archivos de forma silenciosa y sin que el usuario lo haya ordenado explícitamente. NO restringe el uso de credenciales cuando el propio usuario las proporciona y autoriza su uso para una tarea.
 ---
-# Skill de Gobernanza de Datos y Seguridad (Safe Data Governance)
+# Skill de Gobernanza de Datos y Seguridad
 
-Esta skill regula el comportamiento del agente para garantizar la integridad del entorno de desarrollo y la base de datos del usuario, prohibiendo estrictamente modificaciones silenciosas a datos persistentes, credenciales de inicio de sesión o configuraciones críticas de seguridad.
+Esta skill protege contra modificaciones **silenciosas o no autorizadas** a datos sensibles. Su objetivo es evitar que el agente cambie credenciales, permisos o datos críticos sin que el usuario lo haya pedido — no bloquear tareas en las que el usuario mismo entrega sus credenciales y autoriza usarlas.
+
+## Distinción Crítica
+
+| Escenario | Comportamiento del agente |
+|---|---|
+| Usuario proporciona su contraseña y ordena usarla en un script/tarea | Úsala sin pedir confirmación adicional |
+| Agente necesita credenciales y las solicita al usuario | Preguntar y esperar respuesta |
+| Agente modifica contraseñas/hashes en BD sin haberlo pedido el usuario | Prohibido |
+| Agente cambia permisos/roles de usuarios de forma silenciosa | Prohibido |
+| Script de prueba automática altera cuentas reales sin aviso | Prohibido |
 
 ## Activadores de la Skill
-Activa esta skill cuando el usuario solicite explícitamente cuidado con los datos, seguridad de credenciales o gobernanza segura (por ejemplo, usando frases como "cuidado con la base de datos", "no cambies claves", "aplica gobernanza segura" o similares). También debe activarse cuando se realicen tareas de automatización complejas o pruebas de inicio de sesión que involucren cuentas de usuario.
+
+Activa esta skill en alguno de estos contextos:
+- Tareas de automatización o scripts que accedan a cuentas de usuario reales.
+- Operaciones SQL masivas (`UPDATE`, `DELETE`, `DROP`) sobre tablas de usuarios, roles o configuraciones maestras.
+- Modificaciones a archivos de configuración de seguridad (`.env`, `appsettings.json`, `sudoers`, etc.) que no hayan sido solicitadas explícitamente.
 
 ## Instrucciones de Comportamiento
 
-1. **Gestión de Credenciales Segura y Consentimiento:** Queda estrictamente prohibido alterar contraseñas, hashes de seguridad, roles, permisos o correos de usuarios en la base de datos o en archivos locales sin una instrucción directa, explícita e inequívoca del usuario en el turno actual. Se permite, sin embargo, la creación y provisión automática de perfiles de desarrollo o cuentas de prueba locales y mock (que no afecten los entornos de producción o base de datos de sistemas externos) para agilizar las fases de depuración y testeo.
-2. **Uso de Datos Mock y Evitar Atajos Destructivos:** Durante tareas de pruebas (ej: scripts de automatización de navegador o llamadas simuladas de API), el agente no debe alterar contraseñas de cuentas reales para facilitar el acceso de bots. En su lugar, debe:
-   - Solicitar al desarrollador un usuario de pruebas dedicado.
-   - Utilizar cuentas mock o usuarios falsos locales de pruebas preexistentes en los seeds de desarrollo.
-   - Solicitar al usuario que ingrese las credenciales de forma manual si es necesario.
-3. **Control y Transparencia en Consultas SQL Modificadoras:** Cualquier consulta SQL de tipo `UPDATE`, `INSERT`, `DELETE` o `DROP` que afecte tablas de usuarios, configuraciones maestras, o realice modificaciones masivas, debe ser expuesta claramente en el chat explicando su impacto, y requerir aprobación antes de ejecutarse en el sistema.
-4. **Preservación del Entorno del Desarrollador:** Trata la base de datos de desarrollo y el entorno local con respeto técnico (como si fuera un entorno de producción local). No realices operaciones que dejen inoperativo el login, bloqueen cuentas, o impidan que otros miembros del equipo accedan al sistema.
-5. **Mecanismo de Rollback y Registro de Cambios:** Ante modificaciones accidentales en credenciales de desarrollo o configuraciones sensibles, registra inmediatamente el valor previo y provee comandos, scripts SQL o instrucciones de rollback inmediatos para deshacer el cambio al finalizar la tarea.
+1. **Credenciales Explícitas del Usuario → Usar Directamente:** Si el usuario proporciona su contraseña, token, o clave SSH en el mensaje y la autoriza para ejecutar un comando o script, **úsala sin restricción ni solicitud de confirmación adicional**. El consentimiento ya fue dado por el hecho de proporcionarla.
+
+2. **Credenciales No Proporcionadas → Pedir, No Inventar:** Si una tarea requiere credenciales que el usuario no ha proporcionado, solicítalas de forma puntual y clara. No las inventes, no uses placeholders vacíos, no las hardcodees en archivos sin avisar.
+
+3. **Modificaciones a BD de Usuarios o Roles → Mostrar y Aprobar:** Cualquier consulta SQL de tipo `UPDATE`, `INSERT`, `DELETE` o `DROP` sobre tablas de usuarios, roles, permisos o configuraciones maestras debe mostrarse en el chat con su impacto explicado **antes de ejecutarse**.
+
+4. **Scripts de Automatización → No Alterar Cuentas Reales:** Durante pruebas automatizadas (browser agents, API mocks), no modificar contraseñas de cuentas reales para facilitar el acceso del bot. Usar cuentas de prueba dedicadas o solicitar al usuario que las provea.
+
+5. **Rollback ante Error:** Si durante una tarea se modifica accidentalmente un dato crítico (contraseña, permiso, configuración), documentar el valor anterior y proporcionar inmediatamente el comando de rollback.
