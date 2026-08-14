@@ -1,11 +1,11 @@
 ---
-name: titan-frontend
-description: Parámetros, reglas y estándares de arquitectura frontend con Clean Architecture en Angular 19 (Domain, Data, Application, Presentation, Standalone Components, Signals, RxJS, Guards e Interceptors).
+name: titulacion-frontend
+description: Parámetros, reglas y estándares de arquitectura frontend con Clean Architecture en Angular 22 (Domain, Data, Application, Presentation, Standalone Components, Signals, RxJS, Guards e Interceptors).
 ---
 
-# Estándar de Desarrollo Frontend — Clean Architecture en Angular 19 (Titán ISTPET)
+# Estándar de Desarrollo Frontend — Clean Architecture en Angular 22 (Titulación ISTPET)
 
-Este documento define la arquitectura limpia (**Clean Architecture / Hexagonal**), convención de código, separación de capas, manejo de estado reactivo con Signals, integración HTTP y calidad para el cliente web Angular 19 del sistema **Titan** del Instituto Tecnológico Superior Traversari (ISTPET).
+Este documento define la arquitectura limpia (**Clean Architecture / Hexagonal**), convención de código, separación de capas, manejo de estado reactivo con Signals, integración HTTP y calidad para el cliente web Angular 22 del sistema **Titulación ISTPET** del Instituto Tecnológico Superior Traversari (ISTPET).
 
 ---
 
@@ -20,7 +20,7 @@ El agente actúa como un **Arquitecto Frontend Senior con 10+ años de experienc
 - **Principio de Responsabilidad Única (SRP) y Modularidad**:
   - **Componentes (.ts)**: Máximo ~200 líneas (ideal: 80 a 150 líneas). Delegan la lógica a Facades/Use Cases y subcomponentes.
   - **Plantillas HTML (.html)**: Máximo ~150 líneas (ideal: <100 líneas). Dividir en subcomponentes Dumb si la vista crece.
-  - **Estilos (.css / .scss)**: Máximo ~100 líneas, utilizando estrictamente los tokens de `titan-ui-design`.
+  - **Estilos (.css / .scss)**: Máximo ~100 líneas, utilizando estrictamente los tokens de `titulacion-ui-design`.
   - **Use Cases (.ts)**: Máximo ~80 líneas. Una sola operación o regla de aplicación por caso de uso.
 - **Patrón Smart vs. Dumb Components**:
   - **Smart Components (Contenedores/Páginas)**: Consumen Facades o Use Cases, coordinan vistas y distribuyen datos.
@@ -31,7 +31,7 @@ El agente actúa como un **Arquitecto Frontend Senior con 10+ años de experienc
 - **Cero `any` tipados**: Tipado estricto en el 100% del código.
 - **Cero manipulación directa del DOM**: Prohibido `document.querySelector`, `element.style`, `innerHTML`.
 - **Reactividad con Signals & RxJS Limpio**: Usar Signals para estado reactivo síncrono/UI y RxJS para flujos asíncronos en Repositorios. Cero `.subscribe()` huérfanos; preferir Facades, `toSignal()` o pipes `async`.
-- **Toda la UI se adhiere a `titan-ui-design`**: Consistencia visual rigurosa con la paleta institucional ISTPET y Microsoft Fluent Design 2.
+- **Toda la UI se adhiere a `titulacion-ui-design`**: Consistencia visual rigurosa con la paleta institucional ISTPET y Microsoft Fluent Design 2.
 
 ---
 
@@ -420,7 +420,7 @@ export class LoginComponent {
 <!-- presentation/pages/login/login.component.html -->
 <div class="fluent-card login-card">
   <header class="card-header">
-    <h1 class="fluent-title-lg">Acceso al Sistema Titán</h1>
+    <h1 class="fluent-title-lg">Acceso al Sistema Titulación ISTPET</h1>
     <p class="fluent-body-muted">Ingrese con sus credenciales institucionales ISTPET</p>
   </header>
 
@@ -580,4 +580,6 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
 - [app.config.ts](file:///c:/Users/DESARROLLADOR/Desktop/Proyectos/titan/frontend/src/app/app.config.ts)
 - [app.routes.ts](file:///c:/Users/DESARROLLADOR/Desktop/Proyectos/titan/frontend/src/app/app.routes.ts)
-- [titan-ui-design SKILL.md](file:///c:/Users/DESARROLLADOR/Desktop/Proyectos/titan/.agents/skills/titan-ui-design/SKILL.md)
+- [titulacion-ui-design SKILL.md](file:///c:/Users/DESARROLLADOR/Desktop/Proyectos/titan/.agents/skills/titulacion-ui-design/SKILL.md)
+
+

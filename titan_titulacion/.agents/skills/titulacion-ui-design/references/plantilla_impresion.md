@@ -40,3 +40,5 @@ Plantilla de impresión HTML/CSS sobria y oficial para reportes, actas de grado 
   }
 }
 ```
+
+

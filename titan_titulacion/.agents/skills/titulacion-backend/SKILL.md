@@ -1,11 +1,11 @@
 ---
-name: titan-backend
+name: titulacion-backend
 description: Parámetros, reglas y estándares de arquitectura backend en C# / .NET 8 (Clean Architecture, Controllers REST, DTOs, EF Core MySQL y JWT).
 ---
 
-# Estándar de Arquitectura Backend — Titán ISTPET (.NET 8)
+# Estándar de Arquitectura Backend — Titulación ISTPET (.NET 8)
 
-Este documento define las reglas de arquitectura, convencion de codigo, seguridad y calidad para el backend del sistema **Titan** del Instituto Tecnologico Superior Traversari (ISTPET). Toda implementacion debe cumplir estos estandares sin excepcion.
+Este documento define las reglas de arquitectura, convencion de codigo, seguridad y calidad para el backend del sistema **Titulación ISTPET** del Instituto Tecnologico Superior Traversari (ISTPET). Toda implementacion debe cumplir estos estandares sin excepcion.
 
 ---
 
@@ -25,7 +25,7 @@ El agente actúa como un **Ingeniero Principal y Arquitecto de Software Senior c
 - **Aprovechar C# Moderno (.NET 8/9)**:
   - Usar **Primary Constructors** para eliminar boilerplate de campos privados.
   - Usar **Records** posicionales para DTOs e inmutabilidad automática.
-  - Usar **File-scoped Namespaces** (`namespace Titan.Domain.Entities;`) y **Global Usings**.
+  - Usar **File-scoped Namespaces** (`namespace TitulacionIstpet.Domain.Entities;`) y **Global Usings**.
 - **Causa raíz, no síntomas**: Todo bug o deficiencia se resuelve atacando su origen arquitectónico. Prohibido aplicar workarounds, parches silenciosos o capas de corrección superficial.
 - **Rediseño sobre remiendo**: Si un problema viene de un tipo mal definido, una entidad mal mapeada o un contrato incorrecto, se propone el rediseño correcto — no se agrega código defensivo encima.
 - **Cuestionar antes de implementar**: Si la petición del usuario tiene un defecto de diseño, se notifica proactivamente con la solución correcta antes de escribir código.
@@ -38,14 +38,14 @@ El agente actúa como un **Ingeniero Principal y Arquitecto de Software Senior c
 
 ```
 backend/src/
-├── Titan.Domain/           <- Nucleo. Sin dependencias externas.
+├── TitulacionIstpet.Domain/           <- Nucleo. Sin dependencias externas.
 │   ├── Entities/           <- Entidades mapeadas de MySQL (EF Core)
 │   ├── Interfaces/
 │   │   ├── Security/       <- IPasswordHasher, IJwtTokenGenerator
 │   │   └── Repositories/   <- Contratos de repositorios (opcional)
 │   └── Enums/              <- Enumeraciones de dominio
 │
-├── Titan.Application/      <- Casos de uso. Solo depende de Domain.
+├── TitulacionIstpet.Application/      <- Casos de uso. Solo depende de Domain.
 │   ├── DTOs/
 │   │   ├── Auth/           <- LoginRequestDto, LoginResponseDto, RefreshTokenRequestDto
 │   │   ├── Users/          <- UserPermissionsDto, UserProfileDto
@@ -53,16 +53,16 @@ backend/src/
 │   ├── Interfaces/         <- IAuthService, IRbacService, IRbacManagementService
 │   └── Validators/         <- Validaciones de DTOs (FluentValidation)
 │
-├── Titan.Infrastructure/   <- Implementaciones tecnicas. Depende de Application.
+├── TitulacionIstpet.Infrastructure/   <- Implementaciones tecnicas. Depende de Application.
 │   ├── Data/
-│   │   └── TitanDbContext.cs
+│   │   └── SigafiDbContext.cs
 │   ├── Security/
 │   │   ├── PasswordHasher.cs
 │   │   └── JwtTokenGenerator.cs
 │   ├── Services/           <- AuthService, RbacService, RbacManagementService
 │   └── DependencyInjection.cs
 │
-└── Titan.Api/              <- Presentacion. Depende de Application e Infrastructure.
+└── TitulacionIstpet.WebApi/              <- Presentacion. Depende de Application e Infrastructure.
     ├── Controllers/        <- AuthController, RbacController, [Modulo]Controller
     ├── Attributes/         <- HasPermissionAttribute
     ├── Middleware/          <- Middleware de manejo de errores global
@@ -91,8 +91,8 @@ backend/src/
 - Los DTOs son clases inmutables con propiedades `init` o registros `record`.
 
 ### Servicios e Interfaces
-- Interfaz: `I[Nombre]Service` en `Titan.Application/Interfaces/`.
-- Implementacion: `[Nombre]Service` en `Titan.Infrastructure/Services/`.
+- Interfaz: `I[Nombre]Service` en `TitulacionIstpet.Application/Interfaces/`.
+- Implementacion: `[Nombre]Service` en `TitulacionIstpet.Infrastructure/Services/`.
 - Ejemplos: `IAuthService` / `AuthService`, `IRbacService` / `RbacService`.
 
 ### Entidades
@@ -189,7 +189,7 @@ public async Task<ActionResult<UsuarioResponseDto>> GetUsuario(int id) { ... }
 
 ## 7. EF Core — Convenciones de Acceso a Datos
 
-- `TitanDbContext` vive en `Titan.Infrastructure/Data/`.
+- `SigafiDbContext` vive en `TitulacionIstpet.Infrastructure/Data/`.
 - Todos los metodos de acceso a datos son `async` con `CancellationToken`.
 - No usar `Include()` en cadena sin un proposito definido — cada consulta carga solo lo que necesita.
 - Proyectar a DTO directamente en la consulta con `.Select()` cuando sea posible — no cargar la entidad completa para luego mapearla.
@@ -337,7 +337,9 @@ public class TitulacionController : ControllerBase
 
 ## 12. Referencias Internas del Proyecto
 
-- [Program.cs](file:///c:/Users/DESARROLLADOR/Downloads/titan/backend/src/Titan.Api/Program.cs)
-- [AuthController.cs](file:///c:/Users/DESARROLLADOR/Downloads/titan/backend/src/Titan.Api/Controllers/AuthController.cs)
-- [DependencyInjection.cs](file:///c:/Users/DESARROLLADOR/Downloads/titan/backend/src/Titan.Infrastructure/DependencyInjection.cs)
-- [TitanDbContext.cs](file:///c:/Users/DESARROLLADOR/Downloads/titan/backend/src/Titan.Infrastructure/Data/TitanDbContext.cs)
+- [Program.cs](file:///c:/Users/DESARROLLADOR/Downloads/titan/backend/src/TitulacionIstpet.WebApi/Program.cs)
+- [AuthController.cs](file:///c:/Users/DESARROLLADOR/Downloads/titan/backend/src/TitulacionIstpet.WebApi/Controllers/AuthController.cs)
+- [DependencyInjection.cs](file:///c:/Users/DESARROLLADOR/Downloads/titan/backend/src/TitulacionIstpet.Infrastructure/DependencyInjection.cs)
+- [SigafiDbContext.cs](file:///c:/Users/DESARROLLADOR/Downloads/titan/backend/src/TitulacionIstpet.Infrastructure/Data/SigafiDbContext.cs)
+
+

@@ -1,4 +1,4 @@
-# Referencia de Componentes para Titán ERP System
+# Referencia de Componentes para Titulación ISTPET ERP System
 
 Ejemplos de componentes alineados estrictamente al estándar **ERP Limpio / Holded / Xero**.
 
@@ -63,3 +63,5 @@ Ejemplos de componentes alineados estrictamente al estándar **ERP Limpio / Hold
   </div>
 </aside>
 ```
+
+

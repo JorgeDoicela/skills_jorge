@@ -1,11 +1,11 @@
 ---
-name: titan-ui-design
-description: Estándar de diseño UI/UX basado en Microsoft Fluent Design 2 para Titán (ISTPET), integrado con los colores oficiales del Instituto (Azul Marino #1b2a4a y Dorado Académico #c59b27) y soporte nativo para Modo Claro y Modo Oscuro.
+name: titulacion-ui-design
+description: Estándar de diseño UI/UX basado en Microsoft Fluent Design 2 para Titulación ISTPET (ISTPET), integrado con los colores oficiales del Instituto (Azul Marino #1b2a4a y Dorado Académico #c59b27) y soporte nativo para Modo Claro y Modo Oscuro.
 ---
 
-# Estándar de Diseño Microsoft Fluent Design 2 — ISTPET Titán
+# Estándar de Diseño Microsoft Fluent Design 2 — ISTPET Titulación ISTPET
 
-Esta habilidad define las reglas estéticas, de componentes y de interfaz para el sistema **Titán** del Instituto Tecnológico Superior Traversari (ISTPET). El lenguaje visual es **Microsoft Fluent Design 2** — el mismo que usa Microsoft 365, Outlook, Teams y Azure Portal — adaptado con la identidad institucional de ISTPET.
+Esta habilidad define las reglas estéticas, de componentes y de interfaz para el sistema **Titulación ISTPET** del Instituto Tecnológico Superior Traversari (ISTPET). El lenguaje visual es **Microsoft Fluent Design 2** — el mismo que usa Microsoft 365, Outlook, Teams y Azure Portal — adaptado con la identidad institucional de ISTPET.
 
 ---
 
@@ -403,7 +403,7 @@ Dos niveles de navegacion lateral, como en Outlook web:
 
 ```
 +----------------------------------------------------------+
-| [ISTPET] Titan     [---- Busqueda ----]    [notif avatar]| <- Topbar 48px navy
+| [ISTPET] Titulación ISTPET     [---- Busqueda ----]    [notif avatar]| <- Topbar 48px navy
 +----+----------+------------------------------------------+
 |    |          |                                          |
 | 48 | Sidebar  |  Area de contenido principal             |
@@ -417,7 +417,7 @@ Dos niveles de navegacion lateral, como en Outlook web:
 
 ### Topbar (48px)
 - Background: `#1b2a4a`
-- Logo: cuatro cuadros + "ISTPET Titan" en blanco
+- Logo: cuatro cuadros + "ISTPET Titulación ISTPET" en blanco
 - Busqueda centrada: input fondo `rgba(255,255,255,0.12)`, borde `rgba(255,255,255,0.2)`
 - Iconos derecha: notificaciones, configuracion, avatar en `rgba(255,255,255,0.85)`
 
@@ -628,7 +628,9 @@ Estas reglas evitan que el resultado parezca un template de IA generico:
 
 ## 12. Referencias
 
-- [CSS Tokens — paleta_tokens.css](file:///c:/Users/DESARROLLADOR/Downloads/titan/.agents/skills/titan-ui-design/references/paleta_tokens.css)
-- [Componentes de ejemplo — componentes_ejemplos.md](file:///c:/Users/DESARROLLADOR/Downloads/titan/.agents/skills/titan-ui-design/references/componentes_ejemplos.md)
+- [CSS Tokens — paleta_tokens.css](file:///c:/Users/DESARROLLADOR/Downloads/titan/.agents/skills/titulacion-ui-design/references/paleta_tokens.css)
+- [Componentes de ejemplo — componentes_ejemplos.md](file:///c:/Users/DESARROLLADOR/Downloads/titan/.agents/skills/titulacion-ui-design/references/componentes_ejemplos.md)
 - Fluent UI System Icons: https://github.com/microsoft/fluentui-system-icons
 - Microsoft Fluent Design 2: https://learn.microsoft.com/design/
+
+
