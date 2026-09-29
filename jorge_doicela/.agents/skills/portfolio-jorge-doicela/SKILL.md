@@ -10,7 +10,11 @@ Esta habilidad define los estándares y la arquitectura completa para el subproy
 
 ## Documentación Técnica Oficial
 * [01_frontend_y_terminal_ssh.md](../../../docs/03-portfolio/01-frontend/01_frontend_y_terminal_ssh.md)
-* [02_backend_y_persistencia.md](../../../docs/03-portfolio/02-backend/01_backend_y_persistencia.md)
+* [01_backend_y_persistencia.md](../../../docs/03-portfolio/02-backend/01_backend_y_persistencia.md)
+* [01_roadmap_portfolio.md](../../../docs/03-portfolio/03-roadmap/01_roadmap_portfolio.md)
+* [02_terminal_real_sandbox_linux.md](../../../docs/03-portfolio/03-roadmap/02_terminal_real_sandbox_linux.md)
+* [03_tunnel_cloudflare_setup.md](../../../docs/03-portfolio/03-roadmap/03_tunnel_cloudflare_setup.md)
+* [04_puesta_en_marcha_vps_y_arquitectura_sandbox.md](../../../docs/03-portfolio/03-roadmap/04_puesta_en_marcha_vps_y_arquitectura_sandbox.md)
 
 ---
 
@@ -19,6 +23,7 @@ Esta habilidad define los estándares y la arquitectura completa para el subproy
 * **Subdominio:** `portfolio.jorgedoicela.com` (en desarrollo: `portfolio.localhost:3001`).
 * **Frontend:** Grupo de rutas `frontend/web/src/app/(portfolio)/`.
 * **Backend:** Módulo modular aislado `backend/src/portfolio/`.
+* **Sandbox Docker Encapsulado:** `backend/src/portfolio/docker/` (`Dockerfile` Alpine 3.20 hardened, `sandbox_profile.sh` y `welcome.txt`).
 * **Persistencia:** Base de datos SQLite física independiente `portfolio.sqlite` conectada mediante `'portfolioConnection'` en TypeORM.
 * **Aislamiento de Estilos y Diseño:** Utiliza exclusivamente su propio archivo `(portfolio)/globals.css` (estética **Dark Luxury** con fondos oscuros profundos, toques metálicos/dorados refinados, tipografía Geist/Mono de alta gama y contrastes de lujo).
 * **Aislamiento de Assets:** Recursos estáticos ubicados en `frontend/web/public/portfolio/`.
@@ -35,32 +40,44 @@ frontend/web/src/app/(portfolio)/
 │   └── page.tsx            # Página principal del portafolio (9 secciones editoriales + SSR fallback)
 ├── features/
 │   ├── projects/           # Feature: Showcase y catálogo de proyectos
-│   │   ├── components/     # ProjectShowcase.tsx
-│   │   └── types.ts        # Tipos e interfaces de proyectos
-│   ├── terminal/           # Feature: Terminal virtual interactiva
-│   │   ├── components/     # TerminalConsole.tsx, TerminalHeader.tsx, MatrixRain.tsx, MobileTerminalBanner.tsx
-│   │   ├── hooks/          # useTerminalSocket.ts (Socket.io client)
+│   │   ├── components/     # ProjectShowcase.tsx, ProjectDetailModal.tsx
+│   │   └── types.ts        # Tipos e interfaces de proyectos y casos de estudio
+│   ├── terminal/           # Feature: Terminal virtual interactiva y Live Sandbox
+│   │   ├── components/     # TerminalConsole.tsx, SandboxTerminal.tsx, ServerOfflineBanner.tsx, TerminalHeader.tsx, MatrixRain.tsx, MobileTerminalBanner.tsx
+│   │   ├── hooks/          # useTerminalSocket.ts, useSandboxTerminal.ts
 │   │   ├── utils/          # ansiParser.tsx
 │   │   └── types.ts        # Tipos de la terminal
 │   └── contact/            # Feature: Formulario de contacto
 │       ├── components/     # ContactForm.tsx
 │       ├── hooks/          # useContact.ts
 │       └── types.ts        # Tipos del formulario
+├── shared/                 # Capa Shared FSD (Aislada del slice)
+│   ├── lib/                # api.ts (API_URL, SOCKET_URL, SANDBOX_TUNNEL_URL)
+│   └── index.ts            # Barril consolidado
 ├── components/             # ThemeToggle.tsx, LanguageToggle.tsx, TypewriterRole.tsx, ValuesPhilosophySection.tsx
 ├── globals.css             # Estilos específicos del portafolio
 └── layout.tsx              # Layout independiente con NextIntlClientProvider y generateMetadata dinámico
 ```
 
-### Internacionalización y SEO (next-intl)
+### Internacionalización, SEO y Datos Estructurados (next-intl & Schema.org)
 * **Diccionarios Encapsulados:** Textos de UI gestionados en `(portfolio)/messages/es.json` y `en.json`.
 * **Metadatos Dinámicos Localizados:** `generateMetadata()` consume `getTranslations("Metadata")` para emitir títulos y descripciones en español e inglés.
+* **Datos Estructurados Schema.org (`PortfolioJsonLd.tsx`):** Inyección de esquema `ProfilePage` y `Person` vinculado al portafolio, terminal SSH sobre WebSockets y proyectos.
 * **Etiquetas `hreflang`:** Emite `alternates.languages` (`es-EC` y `en-US`) para posicionar el portafolio en motores de búsqueda internacionales.
 * **Cero Parpadeos (SSR):** `<html lang={locale}>` dinámico según la cookie `NEXT_LOCALE` o cabecera `Accept-Language`.
+* **Sincronización con IA:** Cuando se agreguen nuevos proyectos o comandos de terminal, reflejarlos en `public/portfolio/llms.txt` y en `public/landing/llms.txt`.
 
 
 ### Secciones Principales y Adaptabilidad Móvil
 1. **Hero & Biografía:** Presentación profesional con valores de fe cristiana, visión de ingeniería en IA y ciberseguridad.
-2. **Showcase de Proyectos:** Galería con filtros reactivos por categoría, insignias de estado y soporte bilingüe (`ProjectShowcase.tsx`).
+2. **Showcase de Proyectos y Casos de Estudio (`ProjectShowcase.tsx` & `ProjectDetailModal.tsx`):**
+   * **Tarjetas:** Filtros dinámicos, botón primario en oro satinado (`Demostración ↗`), botón secundario con SVG GitHub (`Código`) y disparador de lectura técnica (`Caso de estudio`).
+   * **Modal In-Page (`createPortal(document.body)`):** Preserva la sesión SSH sin cortes y sigue la jerarquía editorial estricta:
+     1. *Visión General del Sistema:* Propósito y alcance del software.
+     2. *El Desafío Técnico & Restricciones:* Problemas de escala, memoria o concurrencia superados.
+     3. *Arquitectura & Decisiones de Ingeniería:* Justificaciones técnicas de diseño.
+     4. *Stack Tecnológico Empleado:* Herramientas y frameworks.
+     5. *Especificaciones & Telemetría (al final):* Ficha técnica editorial de precisión con líneas punteadas continuas (`border-dotted`).
 3. **Terminal Virtual SSH (Desktop):**
    * En pantallas móviles/táctiles, **no se inicializa el WebSocket ni se renderiza la consola interactiva** debido a la falta de teclas de flecha, Tab y secuencias ANSI en teclados móviles. En su lugar, se muestra un banner explicativo (`MobileTerminalBanner.tsx`).
 4. **Formulario de Contacto:** Envíos directos validados hacia `POST /portfolio/contact`.
@@ -69,29 +86,41 @@ frontend/web/src/app/(portfolio)/
 
 ## 3. Backend, Corpus y Persistencia (NestJS 11)
 
-### 3.1 Corpus Maestro y Sembrado Atómico
-* **Corpus:** `backend/src/portfolio/corpus/projects.json` (Fuente de verdad en Git con 8 proyectos bilingües).
+### 3.1 Corpus Maestro, Sembrado Atómico y Ciclo de Datos
+* **Corpus:** `backend/src/portfolio/corpus/projects.json` (Fuente de verdad en Git con 8 proyectos bilingües y casos de estudio).
 * **Seeder:** `backend/src/portfolio/cli/seed-portfolio.ts` (Sembrado atómico en `portfolio.sqlite` usando `better-sqlite3` en modo WAL y transacción con `INSERT OR REPLACE`).
+* **Ciclo Obligatorio de Extensión de Datos de Proyectos:**
+  Ante cualquier nuevo campo o cambio en los proyectos (ej. métricas, retos, arquitectura, enlaces):
+  1. Actualizar el dataset en `corpus/projects.json` (ES y EN).
+  2. Actualizar la entidad TypeORM `portfolio-project.entity.ts`.
+  3. Actualizar el esquema y sentencias en `seed-portfolio.ts`.
+  4. Actualizar el parseo en `portfolio-projects.service.ts`.
+  5. Ejecutar `pnpm --filter backend seed:portfolio` para reflejar en `portfolio.sqlite`.
+  6. Actualizar la interfaz TypeScript en `frontend/web/src/app/(portfolio)/features/projects/types.ts` y su fallback en `page.tsx`.
 
-### 3.2 Terminal Virtual SSH (WebSockets sobre Socket.io)
-* **Gateway:** `PortfolioGateway` (`backend/src/portfolio/gateways/portfolio.gateway.ts`).
-* **Namespace:** `terminal` (transporte WebSocket exclusivo sobre Socket.io).
-* **Flujo de Eventos:**
-  * Al conectar: Servidor emite `terminal-output` con banner SSH de bienvenida y prompt `jorge@vps-1gb-ram:~$ `.
-  * Cliente emite: `execute-command` enviando el texto del comando.
-  * Servidor emite: `terminal-output` con el resultado procesado.
-* **Comandos Soportados en `PortfolioService`:**
-  * `help`, `about`, `neofetch`, `contact`, `skills`, `clear`, `matrix`, `date`, `uptime`, `ls`, `cat`, `whoami`, `exit`.
+### 3.2 Gateways WebSockets (Socket.io) y Seguridad Blindada
+* **Terminal Guiada:** `PortfolioGateway` (`/terminal`)
+  * Simulación interactiva con sistema de archivos virtual in-memory en TypeScript (Cero superficie RCE).
+  * Rate limiting por socket de 15 comandos/segundo (ventana deslizante) contra saturación del event loop.
+  * Truncado de comandos a 1024 caracteres para prevenir desbordamientos de memoria.
+* **Live Linux Sandbox:** `SandboxGateway` (`/sandbox`)
+  * Orquestación de contenedores efímeros (`dockerode`) en VPS (AWS) o hardware físico propio con túnel cifrado.
+  * Aislamiento kernel estricto: `ReadonlyRootfs: true`, `CapDrop: ['ALL']`, `NetworkMode: 'none'`, `PidsLimit: 50/100`, `Tmpfs` con flags `noexec,nosuid,size=16m`.
+  * `SandboxSecurityService`: 1 sesión activa por IP, cooldown de 60s, máximo 8 sesiones/hora, jail temporal de 15m para abusadores.
+  * Transferencia PTY en caliente sin reciclado de Docker y buffer flood protection (4096 bytes max por chunk en `writeInput`).
+  * Timeout estricto de 5 minutos por sesión (`TTL`) con reap automático de contenedores.
 
-### 3.3 Endpoints REST y Entidades TypeORM
+### 3.3 Endpoints REST, Eventos y Entidades TypeORM
 * **Proyectos:**
-  * `GET /portfolio/projects?lang=es|en`: Listado bilingüe con tecnologías parseadas como arreglo.
+  * `GET /portfolio/projects?lang=es|en`: Listado bilingüe con tecnologías, métricas y puntos de arquitectura parseados.
   * `GET /portfolio/projects/:slug`: Detalle individual por slug.
   * **Entidad:** `PortfolioProject` (`portfolio-project.entity.ts`) con índice único compuesto `@Index(['slug', 'language'], { unique: true })`.
 * **Contacto:**
   * `POST /portfolio/contact`: Recibe y valida `CreateContactMessageDto` (`name`, `email`, `message`).
   * `GET /portfolio/contact`: Listado de mensajes para auditoría administrativa.
   * **Entidad:** `ContactMessage` (`contact-message.entity.ts`).
+* **Sandbox Wake Request (Aviso de Encendido):**
+  * `POST /portfolio/sandbox/wake-request`: Valida `CreateWakeRequestDto` (`name`, `contactInfo`, `notes`) protegido por `ContactThrottleGuard`. Emite `SandboxWakeRequestedEvent` para despacho asíncrono a Telegram.
 
 ---
 
@@ -101,6 +130,9 @@ frontend/web/src/app/(portfolio)/
 # Dependencias para backend o frontend
 pnpm --filter backend add <paquete>
 pnpm --filter web add <paquete>
+
+# Sembrado de datos en portfolio.sqlite
+pnpm --filter backend seed:portfolio
 
 # Chequeo de tipos
 pnpm -r typecheck
@@ -112,6 +144,8 @@ pnpm -r typecheck
 
 | Anti-Patrón | Por qué está prohibido | Solución Correcta |
 |---|---|---|
+| Modificar componentes de Next.js o rutas dinámicas ante errores 404 o listados vacíos de proyectos | Asume erróneamente un fallo en el routing de Next.js cuando la causa raíz es que portfolio.sqlite no existe en local o no fue poblada tras clonar/hacer pull. | Verificar primero si portfolio.sqlite existe y ejecutar pnpm --filter backend seed:portfolio antes de tocar código frontend. |
+| Modificar tipos o datos en el frontend sin actualizar el corpus y seeder del backend | Desincroniza el contrato de datos; el backend SQLite responde con datos obsoletos ignorando el fallback del cliente. | Ejecutar siempre el ciclo completo de datos: `corpus/projects.json` -> `entity` -> `seed-portfolio.ts` -> `seed:portfolio`. |
 | Inyectar TypeOrmModule sin especificar 'portfolioConnection' | Conectaría a la base de datos por defecto en lugar de portfolio.sqlite. | Usar @InjectRepository(ContactMessage, 'portfolioConnection'). |
 | Poner bloques try/catch para devolver respuestas HTTP en el controlador | Duplica código y rompe el formateo estándar del filtro global. | Dejar que los errores sean capturados por GlobalExceptionFilter. |
 | Forzar la apertura de la terminal interactiva en pantallas móviles | En móviles no hay flechas, Tab ni secuencias ANSI; degrada la experiencia. | Mostrar vista adaptada de tarjetas en viewports móviles. |

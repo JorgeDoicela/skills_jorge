@@ -11,7 +11,9 @@ Esta habilidad define las directrices maestras, la arquitectura de hardware/soft
 ## Documentación Técnica Oficial
 * [01_arquitectura_macro_y_hardware.md](../../../docs/01-infraestructura-global/01-arquitectura/01_arquitectura_macro_y_hardware.md)
 * [02_patrones_microarquitectura_y_fsd.md](../../../docs/01-infraestructura-global/01-arquitectura/02_patrones_microarquitectura_y_fsd.md)
-* [01_despliegue_pm2_y_cicd.md](../../../docs/01-infraestructura-global/02-despliegue-y-servidor/01_despliegue_pm2_y_cicd.md)
+* [03_persistencia_local_y_sincronizacion_multiequipo.md](../../../docs/01-infraestructura-global/01-arquitectura/03_persistencia_local_y_sincronizacion_multiequipo.md) ← ciclo SQLite local vs CI/CD y protocolo 404
+* [01_despliegue_pm2_y_cicd.md](../../../docs/01-infraestructura-global/02-despliegue-y-servidor/01_despliegue_pm2_y_cicd.md) ← incluye Sección 2.5: Hardening de Seguridad obligatorio
+* [02_auditoria_seguridad_sep2026.md](../../../docs/01-infraestructura-global/02-despliegue-y-servidor/02_auditoria_seguridad_sep2026.md) ← registro oficial de la auditoría Sep 2026
 
 ---
 
@@ -22,6 +24,10 @@ Esta habilidad define las directrices maestras, la arquitectura de hardware/soft
   * El **frontend web** corre consolidado en un solo proceso Next.js (puerto `3001`) mediante `src/middleware.ts` para resolver subdominios.
 * **Principio de Cajas Negras:** Las 4 aplicaciones (`landing`, `portfolio`, `bible`, `software`) son **proyectos 100% aislados e independientes**. Nunca deben acoplarse ni depender entre sí.
 * **Diseño para la Extracción Inmediata:** Cualquier módulo o subproyecto debe poder extraerse a su propio repositorio o servidor en el futuro y funcionar sin refactorizaciones.
+
+> [!IMPORTANT]
+> **Seguridad Perimetral del Servidor (Obligatorio en todo servidor nuevo):**
+> El servidor debe tener siempre activos: **UFW** (política `deny incoming` con solo 22/80/443), **fail2ban** (ban automático tras 5 intentos SSH fallidos), **PermitRootLogin no** y **Node.js** solo escuchando en `127.0.0.1` (variables `HOST`/`HOSTNAME` en `pm2.config.js`). Ver procedimiento completo en `01_despliegue_pm2_y_cicd.md` §2.5.
 
 ---
 
@@ -41,7 +47,7 @@ Esta habilidad define las directrices maestras, la arquitectura de hardware/soft
 ## 3. Aislamiento de Tipos y Contratos (Cero `@shared`)
 
 * **Cero paquetes `@shared`:** Cada subproyecto define sus propias interfaces TypeScript en sus carpetas locales (`types.ts`, DTOs).
-* **Persistencia Aislada:** Cada módulo del backend interactúa con su propia base de datos SQLite física (`bible.sqlite`, `software.sqlite`, `portfolio.sqlite`) bajo conexiones nombradas (`'bibleConnection'`, etc.).
+* **Persistencia Aislada:** Cada módulo del backend interactúa con su propia base de datos SQLite física encapsulada en `backend/data/` (`bible.sqlite`, `software.sqlite`, `portfolio.sqlite`) bajo conexiones nombradas (`'bibleConnection'`, `'softwareConnection'`, `'portfolioConnection'`).
 
 ---
 
@@ -64,15 +70,28 @@ Esta habilidad define las directrices maestras, la arquitectura de hardware/soft
 * **SEO Internacional Dinámico:** Cada layout de subdominio implementa `generateMetadata()` y emite etiquetas `hreflang` (`es-EC` y `en-US`).
 * **Doble Nivel de i18n:** UI Chrome mediante `useTranslations()` y datos dinámicos en SQLite (`software.sqlite` y `bible.sqlite`) mediante columna `language: 'es' | 'en'` y filtros `?lang=`.
 
-
+### 4.4 Visibilidad en Inteligencia Artificial (GEO) y Arquitectura "Zero-RAM"
+* **Arquitectura Multicanal `public/<proyecto>/llms.txt`:** Cada uno de los 4 proyectos tiene su propio dossier especializado servido directamente por Nginx sin tocar Node.js:
+  * `public/landing/llms.txt` $\rightarrow$ `https://jorgedoicela.com/llms.txt` (Perfil general del creador)
+  * `public/portfolio/llms.txt` $\rightarrow$ `https://portfolio.jorgedoicela.com/llms.txt` (Terminal SSH, proyectos)
+  * `public/software/llms.txt` $\rightarrow$ `https://software.jorgedoicela.com/llms.txt` (7 categorías tecnológicas)
+  * `public/bible/llms.txt` $\rightarrow$ `https://bible.jorgedoicela.com/llms.txt` (9 motores exegéticos)
+* **Obligación de Sincronización:** Cuando se cree, modifique o elimine cualquier proyecto, submódulo o categoría principal en el ecosistema, es **obligatorio actualizar el `llms.txt` de su subcarpeta, su `manifest.json`, su componente `*JsonLd.tsx` y `sitemap.ts`**.
+* **Manifiestos PWA Independientes (`public/<proyecto>/manifest.json`):** Cada subdominio tiene su propia identidad de aplicación instalable (nombre, tema, ícono, ruta de inicio).
+* **Entrega Estática "Zero-RAM" en Nginx:** `llms.txt`, `manifest.json` y `favicon.ico` son resueltos por los mapas `$llms_file`, `$manifest_file` y `$favicon_file` según `$host`, entregando en < 1 ms con **0 MB de consumo de RAM en Node.js**.
+* **Protección Quirúrgica en `robots.ts`:** Permite explícitamente los User-Agents oficiales de IA sobre contenido público y bloquea rutas de backend (`/api/`, `/_next/`, `/socket.io/`) para evitar sobrecargas de CPU y memoria.
 
 ---
 
 ## 5. Servidor, Nginx, PM2 y Despliegue CI/CD
 
-### 5.1 Topología y Seguridad
-* **Cloudflare Edge (Proxy Naranja):** Modo Full (Strict), WAF y SSL de extremo a extremo.
+### 5.1 Topología, Seguridad y Rate Limiting (Zero-RAM)
+* **Cloudflare Edge (Proxy Naranja):** Modo Full (Strict), WAF y SSL de extremo a extremo con paso libre para bots de IA verificados.
 * **Nginx mTLS (`nginx/jorgedoicela.com.conf`):** Autenticación mutua con certificado CA de Cloudflare (`ssl_verify_client on`).
+* **Rate Limiting Perimetral por IP Real (`$http_cf_connecting_ip`):**
+  * `api_limit_zone` (15 req/s, burst 25 nodelay): Protege las consultas a SQLite y el backend NestJS contra scraping masivo (devuelve HTTP 429).
+  * `web_limit_zone` (35 req/s, burst 50 nodelay): Protege el SSR de Next.js de sobrecargas DoS.
+  * Consumo de memoria: ~10 MB en Nginx para gestionar >160.000 IPs sin gastar memoria RAM en Node.js.
 
 ### 5.2 PM2 Standalone
 * **`backend-nest`:** Puerto 3000, límite `300 MB`.
@@ -81,9 +100,21 @@ Esta habilidad define las directrices maestras, la arquitectura de hardware/soft
 ### 5.3 Pipeline CI/CD (`.github/workflows/deploy.yml`)
 1. Compilación y validación de tipos en GitHub Actions (`ubuntu-latest`).
 2. Transferencia segura por `rsync` excluyendo `.sqlite` y `node_modules`.
-3. Sincronización automática de bases de datos (`node dist/bible/cli/seed-corpus.js` y `node dist/software/cli/seed-software.js`).
-4. Sincronización de `nginx/jorgedoicela.com.conf` y recarga en caliente de Nginx.
-5. Reinicio de procesos en PM2.
+3. Sincronización automática de bases de datos (`node dist/bible/cli/seed-corpus.js`, `seed-software.js` y `seed-portfolio.js`).
+4. Construcción automatizada de la imagen `portfolio-sandbox:latest` desde `backend/src/portfolio/docker/` y permisos de socket Docker (`0660 /var/run/docker.sock`).
+5. Sincronización de `nginx/jorgedoicela.com.conf` y recarga en caliente de Nginx.
+6. Reinicio de procesos en PM2.
+
+### 5.4 Ciclo de Vida de Persistencia: Local vs CI/CD (Entornos Multiequipo)
+* **Producción (Automático):** GitHub Actions borra y regenera atómicamente los archivos SQLite mediante los seeders compilados en cada `git push` a `main`. Producción siempre está sincronizada.
+* **Desarrollo Local (Manual e Imperativo):** Los archivos `.sqlite` están en `.gitignore`. Al cambiar de estación de trabajo, clonar o hacer `git pull` con cambios en datasets JSON (`corpus/*.json`) o entidades, es **mandatorio ejecutar**:
+  ```bash
+  pnpm seed:all          # Siembra las 3 bases: bible, software y portfolio
+  # O de forma granular según el dominio:
+  pnpm seed:software     # Re-siembra software.sqlite desde corpus/*.json
+  pnpm seed:bible        # Re-siembra bible.sqlite
+  ```
+* **Protocolo de Diagnóstico 404:** Ante cualquier error `404 Not Found` en rutas dinámicas de contenido (`[slug]`), **el primer paso obligatorio es verificar la persistencia local**. Queda prohibido modificar middleware o componentes sin validar si el registro existe en SQLite.
 
 ---
 
@@ -107,7 +138,22 @@ pnpm run build
 
 ---
 
-## 7. Anti-Patrones Prohibidos
+## 7. Archivos Compartidos del Frontend (Patrón "Migration-Ready")
+
+Los siguientes archivos son transversales al proceso Next.js consolidado pero están **estructurados para que la separación futura de cualquier proyecto sea instantánea y sin residuos**:
+
+| Archivo | Patrón de Aislamiento | Acción al Migrar |
+|---|---|---|
+| `src/app/sitemap.ts` | 4 constantes independientes por proyecto | Copiar solo la constante del proyecto al nuevo servidor |
+| `src/app/robots.ts` | Guía inline con la URL de sitemap a sustituir | Cambiar `sitemap` a la URL del nuevo servidor |
+| `src/middleware.ts` | Bloques etiquetados `// ── PORTFOLIO ──` etc. | Eliminar el bloque del proyecto migrado |
+| `src/app/config.ts` | Resolvedor dinámico de `API_URL` (localhost vs prod) | Copiar archivo o definir `NEXT_PUBLIC_API_URL` local |
+
+> **Obligación de mantenimiento:** Al añadir rutas nuevas a un proyecto, actualizarlas en su bloque/constante correspondiente dentro de cada uno de estos archivos.
+
+---
+
+## 8. Anti-Patrones Prohibidos
 
 | Anti-Patrón | Por qué está prohibido | Solución Correcta |
 |---|---|---|
@@ -116,6 +162,7 @@ pnpm run build
 | Crear paquete común @shared | Acopla el frontend y backend. | Duplicar tipos en types.ts y DTOs locales. |
 | Mezclar estilos globales en un layout raíz | Colisiona clases de Tailwind CSS entre subproyectos. | Cada subproyecto importa solo su propio globals.css. |
 | Compilar en el VPS de producción | Agota la RAM de 1 GB y tumba los servicios. | Compilar en GitHub Actions y subir artefactos con rsync. |
+| Modificar middleware o frontend ante un 404 de contenido editorial | Enmascara la causa raíz: la base SQLite local no fue sembrada tras el git pull. | Verificar primero la persistencia física local o ejecutar `pnpm seed:all`. |
 
 ---
 

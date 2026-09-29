@@ -10,6 +10,7 @@ Esta habilidad define los estándares técnicos, estéticos, de accesibilidad y 
 
 ## Documentación Técnica Oficial
 * [01_arquitectura_y_diseno.md](../../../docs/02-landing/01-arquitectura-y-diseno/01_arquitectura_y_diseno.md)
+* [01_roadmap_landing.md](../../../docs/02-landing/02-roadmap/01_roadmap_landing.md)
 
 ---
 
@@ -23,43 +24,72 @@ Esta habilidad define los estándares técnicos, estéticos, de accesibilidad y 
 
 ---
 
-## 2. Estructura de Directorios del Proyecto
+## 2. Estructura de Directorios del Proyecto (FSD Canónico en 6 Capas)
 
 ```text
-frontend/web/
-├── src/
-│   ├── i18n/
-│   │   └── request.ts          # Configuración de servidor: carga dinámica de mensajes por subdominio
-│   ├── middleware.ts           # Enrutamiento de subdominios y query param ?lang=
-│   └── app/(landing)/
-│       ├── messages/           # Diccionarios locales de la Landing (es.json, en.json)
-│       ├── components/
-│       │   ├── Header.tsx              # Cabecera con selector i18n (ES/EN), theme toggle y reloj Quito
-│       │   ├── PwaRegister.tsx         # Registro del Service Worker de la PWA
-│       │   ├── PersonJsonLd.tsx        # Datos estructurados Schema.org (SEO)
-│       │   ├── SkipToContent.tsx       # Atajo de accesibilidad por teclado (WCAG AA)
-│       │   ├── TypewriterRole.tsx      # Animación de máquina de escribir accesible (aria-live)
-│       │   └── GlassCard.tsx           # Tarjetas interactivas con micro-animaciones
-│       ├── context/
-│       │   └── LanguageContext.tsx     # Adaptador reactivo conectado a next-intl y router.refresh()
-│       ├── globals.css                 # Estilos específicos de la Landing Page
-│       ├── layout.tsx                  # NextIntlClientProvider + generateMetadata dinámica
-│       └── page.tsx                    # Estructura principal y resolutor de subdominios
+frontend/web/src/app/(landing)/
+├── messages/                         # Diccionarios locales de la Landing (es.json, en.json)
+├── globals.css                       # Estilos específicos de la Landing Page (Apple Dark Slate / Apple Impoluto)
+├── layout.tsx                        # ThemeProvider + NextIntlClientProvider + generateMetadata dinámica
+│
+├── providers/                        # CAPA 1 (APP): Contextos reactivos y tema local
+│   ├── theme-provider.tsx            # Wrapper local de next-themes
+│   ├── LanguageContext.tsx           # Adaptador reactivo conectado a next-intl y router.refresh()
+│   ├── PerformanceContext.tsx        # Detección de hardware y aceleración GPU para 3D
+│   └── index.ts
+│
+├── shared/                           # CAPA 6: UI Kit agnóstico, SEO, PWA, Utilidades y Contextos
+│   ├── ui/                           # BentoCard, CustomSelect, QuitoClockBadge, SkipToContent
+│   ├── seo/                          # PersonJsonLd (Schema.org Person & WebSite)
+│   ├── pwa/                          # PwaRegister (Service Worker)
+│   ├── lib/                          # useSubdomainUrl, api (resolución local vs producción)
+│   ├── context/                      # LanguageContext (useLanguage), PerformanceContext (usePerformanceTier)
+│   └── index.ts
+│
+├── entities/                         # CAPA 5: Modelos del Dominio y Contenido Base
+│   ├── highlights/                   # Tipos y datos de los 4 proyectos de Apple Highlights
+│   ├── profile/                      # Datos del autor, biografía y TypewriterRole
+│   ├── links/                        # Estructura de enlaces de acción y medios
+│   └── index.ts
+│
+├── features/                         # CAPA 4: Casos de Uso e Interacciones del Usuario
+│   ├── ai-assistant/                 # AiAssistantChatModal, LinksAiAssistant (chat interactivo)
+│   ├── language-toggle/              # LanguageToggleButton (ES / EN reactivo)
+│   ├── theme-toggle/                 # ThemeToggle (Selector de modo claro/oscuro)
+│   ├── share-profile/                # ShareProfileButton (Web Share API + fallback)
+│   └── index.ts
+│
+├── widgets/                          # CAPA 3: Bloques Visuales Autónomos y Layouts
+│   ├── landing-header/               # LandingHeader (cabecera universal con badge opcional y backLink)
+│   ├── landing-footer/               # LandingFooter (variantes full y compact con LandingFooterLinks)
+│   ├── highlights-carousel/          # AppleHighlightsCarousel con slides/ (Bible, Software, Portfolio)
+│   ├── highlights-explorer/          # AppleDetailExplorer (Modal/Drawer inmersivo de proyectos)
+│   ├── cosmic-canvas/                # LandingVisualEffects, ParallaxBackground, CinematicSpiralGalaxy, InteractiveParticles
+│   ├── consulta-section/             # ConsultaForm (formulario y feedback de leads)
+│   ├── links-showcase/               # LinksHeader, ActionLinksList, ProjectsMediaGrid
+│   └── index.ts
+│
+└── (pages App Router)                # CAPAS 2 & 1: Enrutamiento Físico Next.js
+    ├── page.tsx                      # Vista principal (Hero + Highlights + Bento Grid)
+    ├── consulta/page.tsx             # Solicitud de consultoría
+    ├── links/page.tsx                # Bio Tree y perfiles oficiales
+    ├── contacto/page.tsx             # Redirección
+    └── api/chat/route.ts             # API Route del Asistente IA
 ```
-
 
 ---
 
 ## 3. Funcionalidades Clave y Buenas Prácticas
 
-### 3.1 Resolutor Dinámico de Subdominios (Local vs Producción)
-Detecta si la petición proviene de `localhost` o producción para mapear automáticamente los enlaces hacia `http://*.localhost:3001` o `https://*.jorgedoicela.com`:
+### 3.1 Hook Reactivo SSR-Safe de Subdominios (`useSubdomainUrl`)
+Gestiona de forma unificada y segura para SSR la resolución dinámica hacia `http://*.localhost:3001` (desarrollo) o `https://*.jorgedoicela.com` (producción) sin duplicar lógica en componentes:
 ```typescript
-const isLocal = typeof window !== 'undefined' && 
-  (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1'));
+import { useSubdomainUrl } from '../shared';
 
-const getUrl = (subdomain: string) => 
-  isLocal ? `http://${subdomain}.localhost:3001` : `https://${subdomain}.jorgedoicela.com`;
+// Uso directo en cualquier componente cliente:
+const bibleUrl = useSubdomainUrl('bible');
+const softwareUrl = useSubdomainUrl('software');
+const portfolioUrl = useSubdomainUrl('portfolio');
 ```
 
 ### 3.2 Reloj en Huso Horario de Quito y Saludo Adaptativo
@@ -78,8 +108,9 @@ new Intl.DateTimeFormat('es-EC', {
   * `19:00` - `05:59` -> Buenas noches / Good evening
 
 ### 3.3 Modo Claro / Oscuro (Light & Dark)
-* Conmutador en el header que añade o quita la clase `.light` en `document.documentElement`.
-* Persistencia en `localStorage` bajo la clave `'landing-theme'`.
+* Soporte integral desacoplado (caja negra) con `providers/theme-provider.tsx` (`next-themes`) en `layout.tsx`.
+* Componente modular reutilizable `ThemeToggle.tsx` en `features/theme-toggle/` consumido en `page.tsx`, `ConsultaHeader.tsx` y `LinksTopBar.tsx`.
+* Cero dependencias cruzadas entre subdominios.
 
 ### 3.4 Internacionalización Profesional (next-intl + SSR & SEO Gold Standard)
 * **Server-Side Rendering (SSR):** El servidor entrega el HTML ya traducido desde la primera respuesta evitando parpadeos (*FOUC*).
@@ -91,14 +122,14 @@ new Intl.DateTimeFormat('es-EC', {
 * Service Worker (`public/sw.js`) con estrategia *Network-First* para páginas y *Cache-First* para assets e imágenes.
 * Registro asíncrono con `PwaRegister.tsx`.
 
-### 3.6 SEO Internacional, Datos Estructurados y Accesibilidad
+### 3.6 SEO Internacional, Datos Estructurados (Schema.org) y Visibilidad en IA (GEO)
 * **Metadatos Dinámicos Localizados (`generateMetadata`):** Emite títulos, descripciones y Open Graph en el idioma activo.
 * **Etiquetas `hreflang` para Google:** Configura `alternates.languages` (`es-EC` y `en-US`) para indexar ambas versiones en motores de búsqueda.
-* Script Schema.org de tipo `Person` y `WebSite` (`PersonJsonLd.tsx`).
-* `sitemap.ts` y `robots.ts` en la raíz de Next.js.
+* **Datos Estructurados Schema.org (`PersonJsonLd.tsx`):** Grafo con entidad `Person` (nombre completo Jorge Ismael Doicela Molina, formación en ISTPET, áreas de especialidad `knowsAbout`, redes `sameAs`) y entidad `WebSite`.
+* **Dossier Maestro para LLMs (`public/landing/llms.txt`):** Resumen conciso del perfil completo del creador y enlaces a los 3 dossiers especializados de los subproyectos, servido directamente por Nginx/Cloudflare sin tocar la memoria RAM.
+* `sitemap.ts` y `robots.ts` en la raíz de Next.js con reglas para bots de IA (`GPTBot`, `PerplexityBot`, etc.).
 * Previsualización dinámica de Open Graph en `src/app/opengraph-image.tsx` (1200x630).
 * Accesibilidad WCAG 2.1 AA con atajo para teclado `SkipToContent.tsx`, anillos de enfoque visibles y compatibilidad con lectores de pantalla.
-
 
 ---
 
@@ -119,7 +150,7 @@ pnpm -r typecheck
 | Anti-Patrón | Por qué está prohibido | Solución Correcta |
 |---|---|---|
 | Hacer llamadas fetch a endpoints de backend NestJS | La Landing es 100% estática del lado del cliente y no tiene backend. | Resolver enlaces y contenido puramente en el cliente. |
-| Importar componentes o estilos de (portfolio), (bible) o (software) | Rompe el aislamiento estético y añade dependencias innecesarias. | Mantener los componentes encapsulados en (landing)/components/. |
+| Importar componentes o estilos de (portfolio), (bible) o (software) | Rompe el aislamiento estético y añade dependencias innecesarias. | Mantener los componentes encapsulados en sus capas FSD dentro de (landing)/. |
 | Olvidar la zona horaria en el reloj de Quito | El reloj mostraría la hora local del navegador del visitante en vez de la hora de Ecuador. | Usar timeZone: 'America/Guayaquil' explícitamente en Intl.DateTimeFormat. |
 | Colocar imágenes en carpetas genéricas de public/ | Colisiona con assets de otros subproyectos. | Guardar assets exclusivamente en frontend/web/public/landing/. |
 

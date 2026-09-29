@@ -3,141 +3,82 @@ name: styles-diitra
 description: >
   Activa esta skill para cualquier tarea que involucre el sistema de diseno visual de DIITRA:
   estilos CSS, tokens de diseno, paleta de colores, tipografia, animaciones, nuevos componentes
-  visuales, correccion de inconsistencias de diseno o alineacion con el estilo Vercel Geist.
+  visuales, correccion de inconsistencias de diseno o alineacion estricta con el estilo Vercel.com (Geist).
   Tambien activala cuando el usuario reporte que algo se ve mal o pida mejorar la apariencia
   de cualquier elemento de la interfaz.
 ---
 
-# DIITRA Design System — Skill de Estilos
+# DIITRA Design System — Estándar Oficial Vercel.com (Geist)
 
-Esta skill define las reglas, patrones y convenciones **exclusivas y obligatorias** para todo trabajo
-visual en el proyecto DIITRA, basado fielmente en el **Vercel Geist Design System**.
-
-> Antes de modificar cualquier estilo, leer la referencia completa en:
-> - `references/tokens.md` — Tokens de color, tipografia y escala de grises.
-> - `references/components.md` — Catalogo de clases de componentes disponibles.
-> - `references/patterns.md` — Patrones de diseno establecidos y anti-patrones a evitar.
+Esta skill documenta de forma exacta las convenciones de diseño del sistema DIITRA, combinando la precisión minimalista de **Vercel Geist** con los patrones de densidad propios de DIITRA.
 
 ---
 
-## 1. Regla de Oro: No Introducir Estilos Ad-Hoc
+## 1. Directrices Fundamentales de UX/UI
 
-**Prohibido** usar valores de color, tamano o espaciado hardcodeados directamente en los componentes
-cuando existe un token CSS disponible. Ejemplo:
+### 1.1. Prohibido "KPIs Grandes Arriba" (Anti-Patrón de IA Genérica)
+* **Anti-patrón:** Poner 3 o 4 tarjetas rectangulares gigantes con números enormes arriba de cada pantalla (esto delata interfaces de plantilla de IA genérica).
+* **Patrón Oficial DIITRA (Listas de Resumen de Alta Densidad):** Las métricas y resúmenes se presentan en **bloques de lista horizontal compactos** (`Resumen del Periodo`, `Resumen Institucional`):
+  * Título de sección sobrio en `text-[13px] font-semibold text-[#111]`.
+  * Filas horizontales: indicador circular/progreso tenue a la izquierda + nombre del concepto (`Mis Proyectos Activos`, `Convocatorias Activas`) + valor tabular alineado a la derecha (`0 proyectos`, `1 vigentes`, `100%`).
 
-```tsx
-// MAL — valor hardcoded, rompe la coherencia del sistema
-<div style={{ color: '#888888', fontSize: '9px' }}>
+### 1.2. Estructura Delimitada y Arquitectura de 1 Sola Capa (Uso Equilibrado de Cajas)
+* **Dónde SÍ se usan contenedores y tarjetas Bento:**
+  * Para bloques de resumen formal (ej. tarjeta de metadatos de convocatoria con título, tipo y fechas en cuadrícula estructurada).
+  * Para controles segmentados de pestañas (`p-1 bg-zinc-100 rounded-xl` con pestaña activa en relieve).
+  * Para enmarcar y delimitar listas tabulares con borde exterior fino (`rounded-xl border border-zinc-200/80 divide-y divide-zinc-100`).
+* **Lo que está PROHIBIDO (Anidamiento Asfixiante):**
+  * Meter "cajas dentro de cajas dentro de cajas" con múltiples bordes y fondos grises apilados que aplastan y encierran visualmente los elementos.
+  * Mantener siempre una jerarquía visual limpia de **1 sola capa contenedora directa**, espaciosa y con suficiente margen de respiración.
 
-// BIEN — usa el token del sistema de diseno
-<div className="section-label">
-```
+### 1.3. Jerarquía Tipográfica y Metadatos Clave
+* Los datos institucionales de alto impacto (Títulos de Convocatoria/Proyecto, Fechas de Apertura/Cierre, Estados, Tipos) deben tener presencia y jerarquía destacada:
+  * Título principal: `text-xl` o `text-2xl font-bold tracking-tight text-zinc-950`.
+  * Fechas y metadatos: `text-sm` a `text-[15px] font-bold font-mono text-zinc-900` organizados en cuadrículas limpias de 2 o 3 columnas con labels monospaciados en mayúsculas pequeñas (`text-[10.5px] font-bold text-zinc-400 uppercase tracking-widest`).
 
-Si una necesidad visual no esta cubierta por una clase existente, **primero evalua** si corresponde
-anadir la utilidad al archivo CSS del sistema (`misc.css`, `cards.css`, etc.) antes de escribir
-un `style` inline ad-hoc.
+### 1.4. Acciones de Selección en Listas (Cero Confusión con Checkboxes Falsos)
+* **Prohibido:** Crear botones de acción con iconos de checkbox cuadrados (`[☑ Todos]`, `[☐ Ninguno]`) porque se confunden visualmente con los checkboxes de selección de cada fila.
+* **Patrón Correcto:** Usar enlaces o botones de acción textuales transparentes y directos (*"Seleccionar los X visibles"*, *"Deseleccionar todos"*) o un checkbox maestro en cabecera.
 
----
+### 1.5. Lenguaje Exclusivo del Dominio Académico
+* Prohibido mostrar términos de DevOps/Git (`Rama: main`, `Commit -o-`, `Environment: Production`, `GET /api/... 200 OK`).
+* Habla en el lenguaje institucional de DIITRA: *Convocatorias*, *Proyectos I+D*, *Carga Horaria*, *Distributivo SIGAFI*, *Acreditación CACES*, *Grupos y Semilleros*.
 
-## 2. Jerarquia de Archivos CSS (Arquitectura Modular)
+### 1.6. Cero Truncamientos de Texto (`text-ellipsis`)
+* Los textos deben ser concisos y legibles completos, sin cortes forzados (`...`).
 
-```
-src/
-index.css                    <- Punto de entrada global (fuentes + imports)
-styles/
-  theme.css                  <- Tokens CSS (:root + [data-theme="light"])
-  base.css                   <- Reset global, Tailwind v4 @theme, TipTap, scrollbars
-  animations.css             <- @keyframes + clases de animacion (.skeleton-item, etc.)
-  components.css             <- Indice de imports de subcarpeta components/
-  components/
-    buttons.css              <- .btn-vercel-primary / secondary / .btn-brand
-    cards.css                <- .bento-card, .vercel-grid, .bg-glow
-    inputs.css               <- .input-vercel, autofill fixes
-    alerts.css               <- .badge-vercel-*, .callout-vercel-*, .toast-vercel
-    modals.css               <- .modal-overlay, .modal-card, .popover-vercel
-    misc.css                 <- .tabs-vercel, .section-label, .stat-number,
-                                .custom-scrollbar, .dot-*, .icon-circle-*, .kbd-vercel
-```
+### 1.7. Cero Emojis y Cero Iconos SVG Decorativos
+* Prohibido el uso de emojis en cualquier parte de la interfaz.
+* Prohibidos los iconos SVG decorativos superfluos.
 
-**Regla de modularidad:** Cada archivo de componente **no debe superar 400 lineas**. Si se supera,
-extraer en un nuevo archivo dentro de `components/`.
-
-Modulos CSS especificos de paginas:
-- `src/pages/Calendario/CalendarioPage.css` — modulo de calendario y kanban.
-- `src/pages/Settings/components/SignatureProfileCard.css` — firma digital con tipografias cursivas.
+### 1.8. Expansión Dinámica y Evolución Aditiva de Bloques (Añadir Libremente, Nunca Quitar ni Comprimir)
+* Los bloques de contenido y componentes estructurados deben fluir libremente con altura automática (`h-auto`, `min-h-fit`).
+* Si un bloque requiere alojar nuevos datos, tablas o controles de edición para adaptarse al 100% a los formatos oficiales, **se autoriza activamente editarlos para añadir todo lo necesario**.
+* **Principio Aditivo (Sumar, jamás restar):** Se añaden campos, columnas o herramientas; queda prohibido quitar elementos existentes para "hacer espacio".
+* Queda estrictamente prohibido aplicar alturas fijas forzadas (`h-[xxx]`), scrolls internos restrictivos o recortes que asfixien, compriman o reduzcan el bloque.
 
 ---
 
-## 3. Sistema de Temas (Dark / Light)
+## 2. Paleta y Componentes Oficiales
 
-DIITRA usa un sistema de temas basado en `data-theme` (NO en `prefers-color-scheme`).
-El tema predeterminado **es oscuro** (sin atributo o con `data-theme="dark"`).
-El tema claro se activa explicitamente con `data-theme="light"` en el `<html>`.
-
-- Para sobrescribir en tema claro: `[data-theme="light"] .mi-clase { ... }`
-- Para sobrescribir en tema oscuro: `[data-theme="dark"] .mi-clase { ... }`
-- **Nunca** usar `@media (prefers-color-scheme: dark)` — no esta integrado en el sistema.
-
----
-
-## 4. Integracion con Tailwind CSS v4
-
-El proyecto usa **Tailwind CSS v4** importado en `base.css` mediante `@import "tailwindcss"`.
-Los tokens estan mapeados en el bloque `@theme` generando clases como:
-`bg-surface`, `text-brand`, `text-text-dim`, `bg-bg-deep`, etc.
-
-**Regla de uso:** Tailwind es **complementario**. Usarlo para layout (flex, grid, padding, margin).
-Para colores, bordes y tipografia visual, usar las clases semanticas del sistema de diseno.
+* **Fondo Principal:** `#ffffff` (Canvas claro: `#fafafa` / Dark base: `#000000`).
+* **Líneas y Bordes:** `border-zinc-200/80` (1px sólido ultra-delgado).
+* **Superficies Hover / Activas:** `rgba(0, 0, 0, 0.04)` para hover; `rgba(0, 0, 0, 0.06)` para selección activa.
+* **Botones:**
+  * Primario: `bg-zinc-950 text-[#ffffff] text-[13px] font-medium h-10 px-6 rounded-lg hover:bg-black active:scale-[0.98]`.
+  * Secundario: `border border-zinc-200 bg-white text-zinc-900 text-[13px] font-medium h-10 px-5 rounded-lg hover:border-zinc-400 active:scale-[0.98]`.
 
 ---
 
-## 5. Tipografia
+## 3. Checklist de Validación Obligatoria
 
-| Familia      | Variable CSS         | Clase Tailwind | Uso                          |
-|--------------|----------------------|----------------|------------------------------|
-| Geist Sans   | `var(--font-sans)`   | `font-sans`    | Cuerpo, UI, labels           |
-| Geist Mono   | `var(--font-mono)`   | `font-mono`    | Numeros, IDs, codigo         |
-
-Escala tipografica del sistema:
-
-| Uso                  | Tamano             | Peso    | Notas                                          |
-|----------------------|--------------------|---------|------------------------------------------------|
-| Labels de seccion    | `9.5px`            | 500     | `.section-label`, UPPERCASE, letter-spacing 0.3em |
-| Badges / status      | `8-9px`            | 500-700 | UPPERCASE, letter-spacing 0.05-0.15em          |
-| Texto cuerpo         | `0.75rem-0.875rem` | 400-500 |                                                |
-| Titulos de pagina    | `1.5rem-1.875rem`  | 600     | `.page-header-title`, letter-spacing -0.025em  |
-| Numeros estadistica  | `3rem-3.75rem`     | 600     | `.stat-number`, font-mono, letter-spacing -0.04em |
-
----
-
-## 6. Animaciones y Transiciones
-
-La curva easing estandar del sistema es `cubic-bezier(0.16, 1, 0.3, 1)` (spring suave de Vercel).
-
-Clases de animacion disponibles:
-
-| Clase                           | Descripcion                                       |
-|---------------------------------|---------------------------------------------------|
-| `animate-fade-in-up`            | Aparicion desde abajo con escala (dropdowns, modales) |
-| `skeleton-item` + `skeleton-pulse` | Skeletons shimmer de carga                     |
-| `dot-pulse`                     | Indicador de estado pulsante                      |
-| `animate-conic-spin-slow/fast`  | Giratorio conico para loaders decorativos         |
-| `progress-bar-fill`             | Transicion de progreso de ancho (1000ms)          |
-| `progress-circle-fill`          | Transicion de progreso circular (stroke-dashoffset) |
-
----
-
-## 7. Checklist de Validacion Visual
-
-Antes de finalizar cualquier trabajo de estilos, verificar:
-
-- [ ] Todos los colores usan variables CSS (var(--brand), var(--fg), etc.) — sin hex hardcodeados.
-- [ ] Contenedores con scroll interno tienen clase `custom-scrollbar`.
-- [ ] Los estados hover tienen transicion `0.2s cubic-bezier(0.16, 1, 0.3, 1)`.
-- [ ] Los elementos interactivos tienen `cursor: pointer` y `:active` con `transform: scale(0.97)`.
-- [ ] El tema claro `[data-theme="light"]` esta cubierto cuando el componente usa fondos fijos.
-- [ ] Badges y toasts usan las clases del sistema (`badge-vercel-*`, `callout-vercel-*`).
-- [ ] No se usa `!important` salvo en casos justificados con comentario explicativo.
-- [ ] Los archivos CSS nuevos no superan 400 lineas.
-
-Ver referencia detallada: `references/tokens.md`, `references/components.md`, `references/patterns.md`
+Antes de dar por finalizado cualquier componente visual:
+- [ ] ¿Se usaron contenedores Bento y marcos delimitadores donde aportan orden, evitando el anidamiento excesivo de cajas dentro de cajas?
+- [ ] ¿Los metadatos clave (título, fechas, tipo) tienen tamaño legible y jerarquía tipográfica grande?
+- [ ] ¿Se evitaron botones con iconos de checkbox falsos que causen confusión al usuario?
+- [ ] ¿Se evitaron los KPIs gigantes arriba tipo IA genérica, usando listas de resumen o Bento cards de 1 capa?
+- [ ] ¿Todos los textos y métricas se leen completos (0% de elipsis o truncamientos)?
+- [ ] ¿El lenguaje es 100% del dominio académico (cero jerga de Git/DevOps/APIs)?
+- [ ] ¿Hay CERO emojis en títulos, tarjetas y modales?
+- [ ] ¿Los botones usan la geometría sobria de Vercel (Negro/Blanco sólido)?
+- [ ] ¿Los bloques y contenedores tienen libertad para expandirse en altura (`h-auto`) sin alturas fijas forzadas que los reduzcan o compriman?

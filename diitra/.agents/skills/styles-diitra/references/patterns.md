@@ -1,206 +1,65 @@
-﻿# patterns.md — DIITRA Design Patterns & Anti-Patterns
-
-Patrones establecidos en el sistema de diseno DIITRA y anti-patrones a evitar.
-Fuente: analisis de `src/styles/` y convenciones del proyecto.
+# patterns.md — Patrones Oficiales del Dashboard de DIITRA (Vercel Geist)
 
 ---
 
-## PATRONES ESTABLECIDOS
+## 1. Patrón: Lista de Resumen Compacta (DIITRA Summary Rows)
 
-### P1 — Botones: Tipografia Micro + Transformacion Activa
-
-Todos los botones del sistema usan tipografia micro en uppercase con letter-spacing pronunciado.
-El efecto `:active` de escala sutil proporciona feedback tactico inmediato.
-
-```css
-/* PATRON CORRECTO */
-.btn-mi-accion {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.btn-mi-accion:active {
-  transform: scale(0.97);
-}
-```
-
-### P2 — Hover de Superficie: Elevacion Sutil con Sombra
-
-Las tarjetas interactivas se elevan ligeramente en hover. Nunca usar sombras grandes o coloreadas.
-
-```css
-/* PATRON CORRECTO */
-.mi-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); /* dark */
-  border-color: var(--border-hover);
-}
-[data-theme="light"] .mi-card:hover {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04); /* light — mucho mas suave */
-}
-```
-
-### P3 — Focus Ring Vercel para Inputs
-
-El focus de inputs usa un ring de 1px del color del foreground, no el outline azul del navegador.
-
-```css
-/* PATRON CORRECTO — ya definido en base.css, no repetir */
-.mi-input:focus {
-  outline: none;
-  border-color: var(--fg);
-  box-shadow: 0 0 0 1px var(--fg);
-}
-```
-
-### P4 — Cuadricula Decorativa Vercel
-
-Para fondos de secciones hero o paneles principales, usar `.vercel-grid` o `.vercel-grid-fade`.
-Nunca usar cuadriculas con colores opacos ni tamanos distintos a 32x32px.
-
-### P5 — Skeleton Loaders
-
-Para estados de carga, usar SIEMPRE `.skeleton-item` (no spinners de carga centrales salvo en
-operaciones modales criticas). La clase aplica fondo `--accents-2` con efecto shimmer.
+En lugar de tarjetas de KPI rectangulares gigantes arriba (anti-patrón de IA), DIITRA organiza métricas en **listas de resumen de alta densidad**:
 
 ```tsx
-// PATRON CORRECTO
-{loading ? (
-  <div className="skeleton-item skeleton-pulse" style={{ height: 48, borderRadius: 8 }} />
-) : (
-  <div className="bento-card">...</div>
-)}
+/* PATRÓN CORRECTO DIITRA */
+<div className="border border-[#eaeaea] rounded-lg p-3.5 bg-white">
+  <h4 className="text-[13px] font-semibold text-[#111111] mb-3">Resumen Institucional</h4>
+  <div className="space-y-2.5">
+    {items.map((item, idx) => (
+      <div key={idx} className="flex items-center justify-between text-[12px]">
+        <div className="flex items-center gap-2">
+          <span className="w-3.5 h-3.5 rounded-full border border-[#eaeaea] flex items-center justify-center shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          </span>
+          <span className="text-[#333333] font-medium">{item.label}</span>
+        </div>
+        <span className="text-[#111111] font-mono font-semibold">{item.value}</span>
+      </div>
+    ))}
+  </div>
+</div>
 ```
-
-### P6 — Scroll Interno de Contenedores
-
-Todo contenedor con `overflow-y: auto` o `overflow-y: scroll` debe tener la clase `custom-scrollbar`.
-
-```tsx
-// PATRON CORRECTO
-<div className="custom-scrollbar" style={{ overflowY: 'auto', maxHeight: 400 }}>
-```
-
-### P7 — Indicadores de Estado con Dots y Badges
-
-Para estados de entidades (proyectos, solicitudes, usuarios) usar:
-- `.dot` + `.dot-{estado}` para indicadores compactos inline.
-- `.badge-vercel` + `.badge-vercel-{estado}` para pills de estado en tablas y headers.
-- `.status-tag` para etiquetas tipo "chip" con borde.
-
-No mezclar los tres estilos en el mismo componente.
-
-### P8 — Animaciones de Entrada para Elementos Dinamicos
-
-Los elementos que aparecen dinamicamente (dropdowns, modales, paneles) deben usar animaciones
-de la familia `fadeIn`, `scaleUp` o `slideInFromRight` dependiendo del origen del elemento.
-
-```css
-/* Para popovers que aparecen debajo: */
-animation: fadeInUp 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
-
-/* Para paneles laterales derechos: */
-animation: slideInFromRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-```
-
-### P9 — Colores de Estado: Uso Semantico Estricto
-
-| Color     | Significado                               | Prohibido usar para...          |
-|-----------|-------------------------------------------|---------------------------------|
-| Verde     | Exito, guardado, activo, aprobado         | Informacion neutra, branding    |
-| Rojo      | Error, eliminacion, rechazo, fallo        | Advertencias, estados inactivos |
-| Amarillo  | Advertencia, pendiente, en revision       | Errores, informacion positiva   |
-| Azul      | Informacion neutra, acciones, marca brand | Estados de peligro o exito      |
-| Violeta   | Estados especiales, en progreso avanzado  | Errores o exito                 |
 
 ---
 
-## ANTI-PATRONES — PROHIBIDOS
+## 2. Patrón: Modal de Bienvenida Oficial (Vercel Geist Bento 1-Capa)
 
-### AP1 — Hardcodear Valores de Color
+El modal de bienvenida oficial de DIITRA utiliza una arquitectura limpia de **1 sola capa espaciosa sin anidamientos pesados ni cajas dentro de cajas**:
 
-```css
-/* MAL */
-color: #888888;
-background: #0a0a0a;
+* **Contenedor:** `max-w-[680px] bg-white border border-zinc-200/80 rounded-2xl shadow-[0_20px_70px_rgba(0,0,0,0.15)]`.
+* **Header:**
+  * Breadcrumb: `DIITRA / [Rol]` (insignia en Geist Mono `text-[10.5px] font-mono px-2.5 py-0.5 rounded-full bg-zinc-50 border border-zinc-200`).
+  * Título: `text-[26px] font-bold text-zinc-950 tracking-[-0.03em] leading-tight`.
+  * Subtítulo cálido con la misión institucional del sistema (`text-[13.5px] text-zinc-600 leading-relaxed max-w-xl`).
+* **Cuerpo (Bento Grid 2x2):**
+  * 4 tarjetas amplias de 1 solo nivel: `border border-zinc-200/80 bg-white rounded-xl p-4.5`.
+  * Micro-interacciones de elevación al hacer hover (`hover:border-zinc-400/80 hover:shadow-[0_8px_24px_rgba(0,0,0,0.04)] hover:-translate-y-[1px]`).
+  * Título en Geist Sans 600 (`text-[13.5px]`), etiqueta temática en Geist Mono (`text-[10px]`) y texto explicativo del beneficio para el rol.
+* **Footer:**
+  * Checkbox estilizado de 4px con persistencia en `localStorage`.
+  * Botón primario negro sólido Vercel: `h-10 px-6 rounded-lg bg-zinc-950 text-white font-medium text-[13px] hover:bg-black active:scale-[0.98]`.
 
-/* BIEN */
-color: var(--text-dim);
-background: var(--surface);
-```
+---
 
-### AP2 — Usar `prefers-color-scheme`
+## 3. ANTI-PATRONES PROHIBIDOS
 
-```css
-/* MAL — el sistema de temas usa data-theme, no media queries de SO */
-@media (prefers-color-scheme: dark) { ... }
+### ❌ AP1 — KPIs Gigantes Arriba (IA Genérica)
+* Prohibido poner 3 o 4 cajas gigantes con números sobredimensionados arriba de las vistas. Usa listas compactas de resumen o tarjetas Bento de 1 capa.
 
-/* BIEN */
-[data-theme="dark"] .mi-clase { ... }
-```
+### ❌ AP2 — Anidamiento de Cajas dentro de Cajas (Cosas Aplastadas)
+* Prohibido meter dashboards en miniatura, dibujos o sub-contenedores dentro de un modal.
 
-### AP3 — Ignorar la Curva de Easing Estandar
+### ❌ AP3 — Jerga de Infraestructura / DevOps en UI Académica
+* Prohibido mostrar `Rama: main`, `Commit -o-`, `Environment: Production` o `GET /api/... 200 OK`.
 
-```css
-/* MAL — curvas lineales o ease generico rompen la coherencia visual */
-transition: all 0.3s linear;
-transition: all 0.2s ease;
+### ❌ AP4 — Textos y Títulos Truncados con Elipsis (`...`)
+* Prohibido diseñar tarjetas donde el texto se corte con `text-ellipsis`.
 
-/* BIEN — easing spring de Vercel */
-transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-```
-
-### AP4 — Crear Variantes de Estado con !important sin Documentar
-
-Si se necesita `!important`, debe ir acompanado de un comentario explicativo.
-
-```css
-/* MAL */
-.mi-clase { color: red !important; }
-
-/* BIEN */
-/* Anula el color aplicado por Tailwind en la clase group-hover */
-.mi-clase { color: red !important; }
-```
-
-### AP5 — Inventar Clases de Badge o Toast sin Usar el Sistema
-
-```tsx
-/* MAL — clase inventada fuera del sistema */
-<span className="custom-badge-active">Activo</span>
-
-/* BIEN — clase del sistema de diseno */
-<span className="badge-vercel badge-vercel-success">Activo</span>
-```
-
-### AP6 — Olvidar la Cobertura del Tema Claro
-
-Si un componente usa fondos fijos (rgba con colores claros u oscuros, no variables CSS),
-SIEMPRE agregar su contraparte `[data-theme="light"]`.
-
-```css
-/* MAL — solo funciona en dark */
-.mi-bloque {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* BIEN */
-.mi-bloque {
-  background: rgba(255, 255, 255, 0.05);
-}
-[data-theme="light"] .mi-bloque {
-  background: rgba(0, 0, 0, 0.03);
-}
-```
-
-### AP7 — Importar Tailwind CSS en Archivos CSS de Modulos
-
-`@import "tailwindcss"` SOLO existe en `base.css`. Nunca repetirlo en archivos de modulo o
-componentes individuales.
-
-### AP8 — Archivos CSS con Estilos Globales en Componentes Locales
-
-Los archivos CSS de modulos de pagina (como `CalendarioPage.css`) deben contener UNICAMENTE
-estilos del modulo. No reutilizar clases globales definiendolas ahi nuevamente.
+### ❌ AP5 — Emojis o Iconos Decorativos Superfluos
+* Prohibido usar cualquier emoji o iconos no esenciales.
