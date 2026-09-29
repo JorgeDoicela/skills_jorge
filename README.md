@@ -16,6 +16,7 @@ skills_jorge/
 │       ├── datos-seguros/          # Seguridad en BD, credenciales y datos de prueba
 │       ├── desarrollo-backend/     # Estándares universales (Clean Architecture, DDD, SOLID, APIs, cero parches)
 │       ├── desarrollo-frontend/    # Estándares universales UI/UX (Multi-framework, Component-Driven, WCAG)
+│       ├── documentacion/          # Documentación técnica modular Docs-as-Code (01-, 02-...), sin lenguaje marketero ni emojis
 │       └── sysadmin/               # Administración de sistemas Linux/Windows y DevOps (senior)
 │
 ├── diitra/
@@ -44,6 +45,7 @@ flowchart TD
         G_EFF["ahorro-tokens"]
         G_SYS["sysadmin"]
         G_NOTES["apuntes"]
+        G_DOCS["documentacion"]
     end
 
     subgraph PROYECTO ["2. Capa Proyecto DIITRA (<proyecto>/.agents)"]
@@ -61,6 +63,7 @@ flowchart TD
     TaskSecurity["Modificación Sensible / Login"] --> G_SEC
     TaskSysAdmin["Tareas de SO / Scripts / Redes"] --> G_SYS
     TaskNotes["Toma de Notas / Clases / Congresos"] --> G_NOTES
+    TaskDocs["Documentación Técnica Docs-as-Code"] --> G_DOCS
 ```
 
 ---
@@ -81,7 +84,7 @@ New-Item -ItemType Directory -Force -Path "$HOME\.gemini\config\skills"
 # Copiar reglas globales AGENTS.md
 Copy-Item -Path "global\AGENTS.md" -Destination "$HOME\.gemini\config\AGENTS.md" -Force
 
-# Copiar las 6 skills globales
+# Copiar las 7 skills globales
 Copy-Item -Path "global\skills\*" -Destination "$HOME\.gemini\config\skills\" -Recurse -Force
 ```
 
@@ -93,7 +96,7 @@ mkdir -p ~/.gemini/config/skills
 # Copiar reglas globales AGENTS.md
 cp global/AGENTS.md ~/.gemini/config/AGENTS.md
 
-# Copiar las 6 skills globales
+# Copiar las 7 skills globales
 cp -r global/skills/* ~/.gemini/config/skills/
 ```
 
@@ -118,5 +121,5 @@ cp -r diitra/.agents "<ruta-a-tu-proyecto>/.agents"
 ## Verificación de Instalación
 
 Una vez instalados los archivos en sus destinos:
-- **Tanto en el IDE como en el CLI:** Al abrir cualquier proyecto, el agente respetará las directrices del `AGENTS.md` global y tendrá disponibles las 6 skills globales (`ahorro-tokens`, `apuntes`, `datos-seguros`, `desarrollo-backend`, `desarrollo-frontend`, `sysadmin`).
+- **Tanto en el IDE como en el CLI:** Al abrir cualquier proyecto, el agente respetará las directrices del `AGENTS.md` global y tendrá disponibles las 7 skills globales (`ahorro-tokens`, `apuntes`, `datos-seguros`, `desarrollo-backend`, `desarrollo-frontend`, `documentacion`, `sysadmin`).
 - Al abrir un proyecto con configuración local (ej. **DIITRA**), el agente detectará automáticamente `.agents/` y combinará las directrices locales (`diitra-frontend`, `diitra-backend`) con las skills globales correspondientes.
