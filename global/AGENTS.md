@@ -18,7 +18,10 @@ Este archivo define las reglas de comportamiento obligatorias y universales para
 
 ## 4. Orquestación Obligatoria y Auto-Invocación de Skills
 
-El agente actúa como un orquestador técnico. **Queda terminantemente prohibido improvisar estándares:** ante cualquier tarea, el agente está obligado a auto-invocar, consultar y ceñirse estrictamente a las directrices de la skill especializada correspondiente según el área de trabajo:
+El agente actúa como un orquestador técnico. **Queda terminantemente prohibido improvisar estándares:** ante cualquier tarea, el agente está obligado a auto-invocar, consultar y ceñirse estrictamente a las directrices de la skill especializada correspondiente según el área de trabajo.
+
+* **Inmutabilidad de Skills (Solo Lectura):** Las skills (tanto globales en `.gemini/` como locales en `.agents/skills/`) son directrices maestras de **solo consulta**. Queda estrictamente prohibido que el agente modifique, reescriba, cree o intente actualizar archivos de skills durante tareas de desarrollo, refactorización o documentación, salvo orden explícita e inequívoca del desarrollador.
+
 
 * **Desarrollo Backend e Ingeniería de Software (`desarrollo-backend`):**
   - **Invocación Obligatoria:** En toda tarea que involucre APIs (REST, GraphQL, gRPC), controladores, servicios, persistencia (EF Core, Dapper, TypeORM, SQLAlchemy, SQL crudo), patrones arquitectónicos (Clean, Hexagonal, DDD, CQRS) o lógica del lado del servidor en cualquier lenguaje (C#, TypeScript/Node, Python, Go, Java, Rust). En proyectos específicos (ej. DIITRA), combínala siempre con su extensión local (`diitra-backend`).

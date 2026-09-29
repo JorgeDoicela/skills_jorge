@@ -27,6 +27,9 @@ Esta habilidad define los estándares profesionales para concebir, estructurar, 
 7. **Libertad Total de Expansión y Cero Límites Artificiales de Tamaño:**
    - El agente tiene plena autonomía y libertad para crear **nuevas carpetas temáticas** (`07-...`, `08-...`, etc.), subdirectorios anidados y **tantos archivos específicos como sean necesarios** para cubrir la totalidad del sistema.
    - **No existen límites de tamaño para los archivos:** Queda prohibido recortar, resumir de forma vaga u omitir detalles técnicos por temor a que un archivo sea muy largo o extenso. Si un componente, API o base de datos requiere 1,000 o más líneas para explicar exhaustivamente tablas de campos, flujos de datos, validaciones y diagramas Mermaid, debe documentarse a fondo con el máximo nivel de detalle profesional.
+8. **Frontera Estricta de la Documentación (Prohibido Tocar Skills):**
+   - El alcance de esta habilidad se limita única y exclusivamente al código fuente del sistema y al directorio de documentación técnica del proyecto (`docs/`, dosieres técnicos, guías y `README.md`).
+   - Queda terminantemente prohibido crear, modificar, actualizar o refactorizar archivos de skills o directrices del agente (`.agents/skills/`, `.gemini/skills/`, etc.). Las skills son directrices maestras estables de solo consulta y no forman parte de la documentación viva del proyecto.
 
 ---
 
