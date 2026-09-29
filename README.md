@@ -20,13 +20,41 @@ skills_jorge/
 │       ├── documentacion/          # Documentación técnica modular Docs-as-Code (01-, 02-...), sin lenguaje marketero ni emojis
 │       └── sysadmin/               # Administración de sistemas Linux/Windows y DevOps (senior)
 │
+├── ateneo/
+│   └── .agents/                    # Simulador clínico médico (React 18 + Vite PWA, Material 3, GPC)
+│       ├── AGENTS.md
+│       ├── memory.md
+│       └── skills/ateneo-design-system/
+│
 ├── diitra/
-│   └── .agents/                    # Configuración del workspace específico DIITRA
-│       ├── AGENTS.md               # Stack tecnológico de DIITRA y matriz de combinación de skills
-│       ├── memory.md               # Memoria local persistente de DIITRA (decisiones arquitectónicas consolidadas)
-│       └── skills/
-│           ├── diitra-backend/     # Extensión: convenciones inv_, sigafi (solo lectura), EF Core
-│           └── diitra-frontend/    # Extensión: Yjs, CoWorkField, snake_case, Axios, umbral 700 lineas
+│   └── .agents/                    # Ecosistema DIITRA (.NET 8, MySQL, Yjs CoWork, Geist)
+│       ├── AGENTS.md
+│       ├── memory.md
+│       └── skills/ (backend-diitra, frontend-diitra, styles-diitra)
+│
+├── dosier/
+│   └── .agents/                    # Sistema Curricular PEA (Clean Arch 4 capas, iText 9, Yjs SignalR)
+│       ├── AGENTS.md
+│       ├── memory.md
+│       └── skills/ (backend-dosier, documentacion-dosier, frontend-dosier, styles-dosier)
+│
+├── erp_pymes/
+│   └── .agents/                    # ERP Empresarial B2B (Estándar Holded / Xero / Linear)
+│       ├── AGENTS.md
+│       ├── memory.md
+│       └── skills/estilos-erp-pymes/
+│
+├── jorge_doicela/
+│   └── .agents/                    # Monorepo Personal pnpm (NestJS, Next.js, 1 GB RAM AWS Lightsail)
+│       ├── AGENTS.md
+│       ├── memory.md
+│       └── skills/ (bible, landing, portfolio, software, infraestructura-global)
+│
+├── titan_titulacion/
+│   └── .agents/                    # Sistema Titulación ISTPET (.NET 8/9 C#, Clean Architecture, MySQL)
+│       ├── AGENTS.md
+│       ├── memory.md
+│       └── skills/ (titulacion-backend, titulacion-frontend, titulacion-ui-design)
 │
 └── README.md                       # Guía de despliegue y orquestación (este archivo)
 ```
@@ -107,18 +135,29 @@ cp -r global/skills/* ~/.gemini/config/skills/
 
 ---
 
-### Paso 2: Instalar la Capa de Proyecto (Ejemplo: DIITRA)
+### Paso 2: Instalar la Capa de Proyecto en cada Repositorio
 
-Copia la carpeta `.agents` del proyecto a la raíz de tu workspace local:
+Copia la carpeta `.agents` de cada proyecto a la raíz de su respectivo workspace local:
 
 #### En Windows (PowerShell):
 ```powershell
-Copy-Item -Path "diitra\.agents" -Destination "<ruta-a-tu-proyecto>\.agents" -Recurse -Force
+# Ejemplo para desplegar en cada proyecto según corresponda:
+Copy-Item -Path "ateneo\.agents"          -Destination "C:\Ruta\A\ateneo\.agents"          -Recurse -Force
+Copy-Item -Path "diitra\.agents"          -Destination "C:\Ruta\A\diitra\.agents"          -Recurse -Force
+Copy-Item -Path "dosier\.agents"          -Destination "C:\Ruta\A\dosier\.agents"          -Recurse -Force
+Copy-Item -Path "erp_pymes\.agents"       -Destination "C:\Ruta\A\erp_pymes\.agents"       -Recurse -Force
+Copy-Item -Path "jorge_doicela\.agents"   -Destination "C:\Ruta\A\jorge_doicela\.agents"   -Recurse -Force
+Copy-Item -Path "titan_titulacion\.agents"-Destination "C:\Ruta\A\titan_titulacion\.agents"-Recurse -Force
 ```
 
 #### En Linux / macOS (Bash):
 ```bash
-cp -r diitra/.agents "<ruta-a-tu-proyecto>/.agents"
+cp -r ateneo/.agents           ~/proyectos/ateneo/.agents
+cp -r diitra/.agents           ~/proyectos/diitra/.agents
+cp -r dosier/.agents           ~/proyectos/dosier/.agents
+cp -r erp_pymes/.agents        ~/proyectos/erp_pymes/.agents
+cp -r jorge_doicela/.agents    ~/proyectos/jorge_doicela/.agents
+cp -r titan_titulacion/.agents ~/proyectos/titan_titulacion/.agents
 ```
 
 ---
@@ -126,5 +165,5 @@ cp -r diitra/.agents "<ruta-a-tu-proyecto>/.agents"
 ## Verificación de Instalación
 
 Una vez instalados los archivos en sus destinos:
-- **Tanto en el IDE como en el CLI:** Al abrir cualquier proyecto, el agente respetará las directrices del `AGENTS.md` global y tendrá disponibles las 7 skills globales (`ahorro-tokens`, `apuntes`, `datos-seguros`, `desarrollo-backend`, `desarrollo-frontend`, `documentacion`, `sysadmin`).
-- Al abrir un proyecto con configuración local (ej. **DIITRA**), el agente detectará automáticamente `.agents/` y combinará las directrices locales (`diitra-frontend`, `diitra-backend`) con las skills globales correspondientes.
+- **Tanto en el IDE como en el CLI:** Al abrir cualquier proyecto, el agente respetará las directrices de `AGENTS.md` global, su memoria persistente `memory.md` y tendrá disponibles las 7 skills globales (`ahorro-tokens`, `apuntes`, `datos-seguros`, `desarrollo-backend`, `desarrollo-frontend`, `documentacion`, `sysadmin`).
+- **Al abrir cualquier proyecto con `.agents/`:** El agente detectará automáticamente su configuración local, cargará su `AGENTS.md` y su `memory.md` específico y combinará sus skills locales con los estándares globales correspondientes.
