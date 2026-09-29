@@ -1,8 +1,8 @@
 ---
-name: respuesta-eficiente
+name: ahorro-tokens
 description: Activa esta skill cuando el usuario pida respuestas directas, limite la búsqueda de archivos, pida evitar análisis del código, o use frases restrictivas como "Solo busca el archivo X", "Ve al grano", "No revises archivos", "No hagas análisis profundo" o "No ejecutes comandos". Evita búsquedas innecesarias de archivos para optimizar tokens.
 ---
-# Skill de Respuestas Eficientes y Restricción de Búsquedas
+# Skill de Ahorro de Tokens y Respuestas Eficientes
 
 Esta skill regula el comportamiento del agente para evitar el consumo innecesario de tokens y prevenir búsquedas exhaustivas de archivos en el proyecto cuando el usuario solicita respuestas directas, rápidas o limitadas en alcance.
 

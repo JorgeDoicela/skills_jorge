@@ -1,8 +1,8 @@
 ---
-name: gobernanza-datos-segura
+name: datos-seguros
 description: Activa esta skill para evitar que el agente modifique contraseñas, credenciales, permisos o configuraciones de seguridad en bases de datos o archivos de forma silenciosa y sin que el usuario lo haya ordenado explícitamente. NO restringe el uso de credenciales cuando el propio usuario las proporciona y autoriza su uso para una tarea.
 ---
-# Skill de Gobernanza de Datos y Seguridad
+# Skill de Datos Seguros y Protección de Credenciales
 
 Esta skill protege contra modificaciones **silenciosas o no autorizadas** a datos sensibles. Su objetivo es evitar que el agente cambie credenciales, permisos o datos críticos sin que el usuario lo haya pedido — no bloquear tareas en las que el usuario mismo entrega sus credenciales y autoriza usarlas.
 

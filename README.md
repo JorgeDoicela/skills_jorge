@@ -11,11 +11,12 @@ skills_jorge/
 ├── global/
 │   ├── AGENTS.md                   # Reglas universales de comportamiento, ahorro de tokens y orquestación
 │   └── skills/                     # Skills globales compartidas entre todos los proyectos
-│       ├── desarrollo-backend/     # Estándares globales C#, ASP.NET Core, EF Core, SOLID
-│       ├── desarrollo-frontend/    # Estándares globales React, TS, UI/UX premium, CSS
-│       ├── gobernanza-datos-segura/# Seguridad en BD, credenciales y datos de prueba
-│       ├── respuesta-eficiente/    # Restricción de búsquedas y respuestas rápidas
-│       └── sysadmin/               # Administración de sistemas Linux/Windows (senior)
+│       ├── ahorro-tokens/          # Restricción de búsquedas y respuestas rápidas
+│       ├── apuntes/                # Notas enriquecidas Markdown/Obsidian, clases, congresos y comandos rápidos
+│       ├── datos-seguros/          # Seguridad en BD, credenciales y datos de prueba
+│       ├── desarrollo-backend/     # Estándares universales (Clean Architecture, DDD, SOLID, APIs, cero parches)
+│       ├── desarrollo-frontend/    # Estándares universales UI/UX (Multi-framework, Component-Driven, WCAG)
+│       └── sysadmin/               # Administración de sistemas Linux/Windows y DevOps (senior)
 │
 ├── diitra/
 │   └── .agents/                    # Configuración del workspace específico DIITRA
@@ -35,12 +36,14 @@ Cuando trabajas en un proyecto (ej. DIITRA), las habilidades operan en **cascada
 
 ```mermaid
 flowchart TD
-    subgraph GLOBAL ["1. Capa Global (C:\Users\DESARROLLADOR\.gemini\config)"]
+    subgraph global ["1. Capa Global (~/.gemini/config o %USERPROFILE%\.gemini\config)"]
         G_AGENTS["AGENTS.md Global"]
         G_BE["desarrollo-backend"]
         G_FE["desarrollo-frontend"]
-        G_SEC["gobernanza-datos-segura"]
-        G_EFF["respuesta-eficiente"]
+        G_SEC["datos-seguros"]
+        G_EFF["ahorro-tokens"]
+        G_SYS["sysadmin"]
+        G_NOTES["apuntes"]
     end
 
     subgraph PROYECTO ["2. Capa Proyecto DIITRA (<proyecto>/.agents)"]
@@ -56,40 +59,64 @@ flowchart TD
     TaskBackend --> P_BE
 
     TaskSecurity["Modificación Sensible / Login"] --> G_SEC
+    TaskSysAdmin["Tareas de SO / Scripts / Redes"] --> G_SYS
+    TaskNotes["Toma de Notas / Clases / Congresos"] --> G_NOTES
 ```
 
 ---
 
-## Guía de Despliegue Manual (Instrucciones de Instalación)
+## Guía de Despliegue Manual (Multiplataforma: IDE y CLI)
 
-Sigue estos dos sencillos pasos para instalar y activar la configuración completa en tu entorno local:
+Sigue estos pasos para instalar y activar la configuración en cualquier dispositivo (Windows, Linux o macOS):
 
-### Paso 1: Instalar la Capa Global en el IDE
+### Paso 1: Instalar la Capa Global
 
-Copia el contenido de `global/` al directorio de configuración global de Gemini en tu usuario de Windows:
+Copia el contenido de `global/` al directorio de configuración global de Gemini/Antigravity de tu usuario.
 
-1. **Copiar `global/AGENTS.md`**:
-   - **Origen:** `skills_jorge/global/AGENTS.md`
-   - **Destino:** `C:\Users\DESARROLLADOR\.gemini\config\AGENTS.md`
+#### En Windows (PowerShell):
+```powershell
+# Crear directorios si no existen
+New-Item -ItemType Directory -Force -Path "$HOME\.gemini\config\skills"
 
-2. **Copiar las Skills Globales**:
-   - **Origen:** `skills_jorge/global/skills/*` (las 5 carpetas: `desarrollo-backend`, `desarrollo-frontend`, `gobernanza-datos-segura`, `respuesta-eficiente`, `sysadmin`)
-   - **Destino:** `C:\Users\DESARROLLADOR\.gemini\config\skills\`
+# Copiar reglas globales AGENTS.md
+Copy-Item -Path "global\AGENTS.md" -Destination "$HOME\.gemini\config\AGENTS.md" -Force
+
+# Copiar las 6 skills globales
+Copy-Item -Path "global\skills\*" -Destination "$HOME\.gemini\config\skills\" -Recurse -Force
+```
+
+#### En Linux / macOS (Bash / Zsh):
+```bash
+# Crear directorios si no existen
+mkdir -p ~/.gemini/config/skills
+
+# Copiar reglas globales AGENTS.md
+cp global/AGENTS.md ~/.gemini/config/AGENTS.md
+
+# Copiar las 6 skills globales
+cp -r global/skills/* ~/.gemini/config/skills/
+```
 
 ---
 
-### Paso 2: Instalar la Capa de Proyecto en DIITRA
+### Paso 2: Instalar la Capa de Proyecto (Ejemplo: DIITRA)
 
-Copia la carpeta `.agents` de DIITRA a la raíz de tu proyecto local de DIITRA:
+Copia la carpeta `.agents` del proyecto a la raíz de tu workspace local:
 
-1. **Copiar `.agents`**:
-   - **Origen:** `skills_jorge/diitra/.agents/`
-   - **Destino:** `c:\Users\DESARROLLADOR\Desktop\Proyectos\diitra\.agents\`
+#### En Windows (PowerShell):
+```powershell
+Copy-Item -Path "diitra\.agents" -Destination "<ruta-a-tu-proyecto>\.agents" -Recurse -Force
+```
+
+#### En Linux / macOS (Bash):
+```bash
+cp -r diitra/.agents "<ruta-a-tu-proyecto>/.agents"
+```
 
 ---
 
 ## Verificación de Instalación
 
 Una vez instalados los archivos en sus destinos:
-- Al abrir cualquier proyecto, el agente respetará las directrices del `AGENTS.md` global y tendrá disponibles las 4 skills globales (`desarrollo-backend`, `desarrollo-frontend`, `gobernanza-datos-segura`, `respuesta-eficiente`).
-- Al abrir el proyecto **DIITRA**, el agente detectará automáticamente `.agents/` y combinará las directrices de `diitra-frontend` y `diitra-backend` con las skills globales correspondientes.
+- **Tanto en el IDE como en el CLI:** Al abrir cualquier proyecto, el agente respetará las directrices del `AGENTS.md` global y tendrá disponibles las 6 skills globales (`ahorro-tokens`, `apuntes`, `datos-seguros`, `desarrollo-backend`, `desarrollo-frontend`, `sysadmin`).
+- Al abrir un proyecto con configuración local (ej. **DIITRA**), el agente detectará automáticamente `.agents/` y combinará las directrices locales (`diitra-frontend`, `diitra-backend`) con las skills globales correspondientes.

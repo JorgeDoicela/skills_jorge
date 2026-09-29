@@ -1,35 +1,76 @@
 ---
 name: desarrollo-frontend
-description: Activa esta skill para tareas de desarrollo frontend, diseño de interfaces de usuario (UI), componentes de React, estilos CSS, animaciones interactivas o integraciones en el cliente.
+description: Activa esta skill para desarrollo frontend profesional, diseño UI/UX de alto nivel, componentes modulares (React, Vue, Svelte, Angular, Next.js, Vanilla), sistemas de diseño, estilos CSS/Modules, gestión predecible de estado, accesibilidad WCAG y cero parches.
 ---
-# Directrices Globales de Desarrollo Frontend y UI/UX Premium
+# Directrices Universales de Desarrollo Frontend y UI/UX Senior
 
-Esta habilidad define los estándares profesionales de diseño de interfaces y desarrollo frontend para todos los proyectos.
+Esta habilidad define los estándares innegociables de ingeniería de interfaces de usuario, arquitectura frontend y experiencia de usuario (UX/UI) en cualquier framework o tecnología web.
 
-## 1. Estética Premium e Interfaz de Usuario (UI/UX)
-* **Alineación Visual y Diseño Moderno:** Usa un sistema de espaciado proporcional y consistente (flex/grid, unidades rem). Diseña interfaces memorables con colores HSL a medida, gradientes suaves, sombras difusas y bordes delgados de alta precisión (`border-border-thin`), garantizando soporte premium para modos oscuros (dark mode).
-* **Interacciones y Fluidez (Micro-animaciones):** Implementa transiciones suaves (`transition-all duration-200`) en estados hover, botones y modales. Utiliza respuestas visuales en tiempo real, esqueletos de carga (skeletons) y animaciones de carga para mejorar la experiencia de usuario.
-* **Adaptabilidad y Responsividad:** Diseña layouts adaptables. Para paneles principales o barras de herramientas laterales que sean colapsables, guarda su estado de visibilidad en almacenamiento local (`localStorage`) para persistir la preferencia del usuario.
-* **Tipografía Profesional:** Utiliza fuentes modernas de Google Fonts (como Inter, Outfit o Roboto) en lugar de las tipografías predeterminadas del navegador.
+---
 
-## 2. Componentes de React y TypeScript
-* **Responsabilidad Única y Modularización:** Mantén los componentes pequeños y modulares. Si un componente supera las 400-500 líneas de código, extrae inmediatamente sus bloques a subcomponentes en una subcarpeta `components/`.
-* **Tipado Estricto:** Define interfaces claras para las propiedades (`Props`) de cada componente. Evita estrictamente el uso de `any`.
-* **Hooks Personalizados:** Separa la lógica compleja o del lado del cliente del renderizado de la UI encapsulándola en Hooks personalizados.
-* **Flujo Limpio de Datos:** Delega la manipulación del estado global y llamadas de API en componentes contenedores principales. Mantén los componentes secundarios enfocados principalmente en la representación visual (componentes de presentación) para optimizar el rendimiento.
+## 1. Mandato Innegociable: Cero Parches en Frontend
 
-## 3. Estilos y Estructura CSS
-* **Vanilla CSS / CSS Modules:** Prioriza Vanilla CSS bien estructurado o CSS Modules para máximo control del diseño.
-* **TailwindCSS:** Evitar por defecto. Solo se usará si el proyecto ya lo tiene configurado o si el desarrollador lo solicita explícitamente.
+* **Prohibición Absoluta de Parches:** Queda terminantemente prohibido aplicar soluciones rápidas o apaños cosméticos que enmascaren problemas de arquitectura o diseño.
+* **Antipatrones Prohibidos:**
+  - **Uso de `any` en TypeScript:** Prohibido usar `any` para eludir errores del compilador. Tipa estrictamente modelos, interfaces de Props, eventos y payloads.
+  - **Hacks de Especificidad CSS:** Prohibido usar `!important` o estilos inline aleatorios para forzar alineaciones que deben resolverse con un sistema de layout limpio (Flexbox, CSS Grid o tokens de espaciado).
+  - **Componentes Monolito:** Prohibido crear componentes gigantescos (>400 líneas) que mezclen llamadas de red, estado global, transformaciones de datos y renderizado.
+  - **Estados Incompletos:** Prohibido omitir estados de carga (skeletons/spinners), estados vacíos (empty states) o estados de error descriptivos. Cada interfaz interactiva debe gestionar el ciclo de vida completo: `idle`, `loading`, `error`, `success`.
+  - **Mutación Directa del Estado:** Prohibido mutar variables reactivas o estado local directamente sin respetar la inmutabilidad.
+* **Disparador `profesional` / `senior` / `sin-parches`:** Ante cualquier duda de interfaz o refactorización, el agente auditará la solución asegurando modularidad, tipado estricto y fidelidad visual al sistema de diseño.
 
-## 4. Integración de API y Colaboración en Tiempo Real
-* **Formularios y Estado Compartido:** Al trabajar con flujos colaborativos en tiempo real (ej. WebSockets, CRDTs, Yjs), encapsula correctamente las entradas utilizando componentes vinculados al estado compartido de forma óptima.
-* **Integración de Servicios y APIs:** Usa clientes HTTP estructurados y maneja de manera proactiva la serialización (camelCase o snake_case) de los DTOs provenientes del servidor para evitar discrepancias de tipos.
+---
 
-## 5. Experto UX/UI y Diseño Visual
-* **Diseño Centrado en el Usuario:** Antes de diseñar cualquier interfaz, razona el flujo mental del usuario: ¿qué necesita hacer?, ¿cuál es la acción principal?, ¿qué puede confundirle? Diseña para reducir la carga cognitiva al mínimo. Una interfaz que requiere explicación es una interfaz que falló.
-* **Jerarquía Visual:** Establece siempre una jerarquía clara de información mediante tamaño, peso tipográfico, color y espaciado. El usuario debe identificar lo más importante en menos de 3 segundos. Si todo tiene el mismo énfasis, nada lo tiene.
-* **Affordance y Feedback Inmediato:** Cada elemento interactivo debe comunicar visualmente que es accionable (cursor pointer, hover state, sombra en botones). Cada acción del usuario debe recibir feedback inmediato: loading states, confirmaciones de éxito, errores inline descriptivos. La ausencia de feedback genera desconfianza.
-* **Consistencia del Sistema de Diseño:** Nunca introduzcas estilos ad-hoc que rompan la consistencia visual del proyecto. Usa siempre los tokens de color, espaciado y tipografía definidos. La inconsistencia visual destruye la percepción de calidad más que cualquier bug.
-* **Accesibilidad (A11y):** Mantén contraste mínimo WCAG AA (4.5:1 para texto normal). Usa atributos semánticos (`aria-label`, `role`, `alt`) en elementos interactivos. Los formularios deben tener labels visibles y asociados correctamente. La accesibilidad no es opcional.
-* **Psicología del Color y Estado:** Los colores comunican semánticamente. Usa colores de estado consistentes (verde → éxito, rojo → error/peligro, amarillo → advertencia, azul → información neutral). No uses colores decorativos para estados funcionales — genera confusión en el usuario.
+## 2. Arquitectura de Interfaces y Component-Driven Design
+
+* **Separación Estricta de Responsabilidades:**
+  - **Componentes de Presentación (Dumb/UI Components):** Enfocados exclusivamente en la representación visual y affordance. Reciben datos y emiten eventos vía props. Fáciles de probar y altamente reutilizables.
+  - **Componentes Contenedores / Páginas (Smart Components):** Orquestan llamadas de API, suscripciones en tiempo real y lectura de estado global.
+  - **Capa de Lógica Reutilizable:** Encapsula la lógica de negocio del cliente, cálculos complejos o consumo de servicios en Hooks personalizados (React), Composables (Vue), o Servicios inyectables (Angular/Vanilla).
+* **Modularización Proactiva (Límite 400 Líneas):**
+  - Si un componente supera las 400 líneas, extrae de inmediato sus secciones lógicas a subcomponentes en una carpeta `components/` adyacente.
+* **Flujo Unidireccional e Inmutabilidad:**
+  - Los datos fluyen hacia abajo (props/inputs) y los eventos fluyen hacia arriba (callbacks/outputs). El estado compartido debe ser predecible y serializable.
+
+---
+
+## 3. Estética Premium, Sistemas de Diseño y CSS
+
+* **Design Tokens y Coherencia Visual:**
+  - Utiliza siempre tokens del sistema de diseño (variables CSS / Custom Properties) para colores, tipografías, radios de borde (`border-radius`), sombras y espaciados proporcionales (escala basada en rems).
+  - Prohibido introducir colores hexadecimales o espaciados arbitrarios ad-hoc que rompan la armonía visual del producto.
+* **Paletas Sofisticadas y Modo Oscuro:**
+  - Emplea combinaciones armónicas basadas en HSL (tonos neutros balanceados, acentos con contraste suficiente, gradientes sutiles y bordes de alta definición). Soporta modos claro y oscuro de manera nativa y consistente.
+* **Micro-animaciones y Fluidez:**
+  - Agrega transiciones sutiles (`transition: all 200ms ease`) en estados hover, focus, modales y botones. Una interfaz reactiva y viva mejora sustancialmente la percepción de rendimiento y calidad.
+* **Tipografía Profesional:**
+  - Aplica tipografías modernas y legibles (Inter, Roboto, Outfit, JetBrains Mono para código) respetando la jerarquía tipográfica (escalas de tamaño y peso `font-weight`).
+
+---
+
+## 4. Experiencia de Usuario (UX) y Accesibilidad (WCAG AA)
+
+* **Reducción de Carga Cognitiva:**
+  - Diseña para que el usuario identifique la acción principal en menos de 3 segundos. Jerarquía visual contundente: el elemento primario destaca claramente sobre los secundarios.
+* **Affordance y Feedback Inmediato:**
+  - Todo elemento interactivo debe comunicar visualmente que puede ser accionado (`cursor: pointer`, cambio sutil de elevación o color al hover/focus).
+  - Nunca dejes al usuario sin respuesta visual tras un clic: desactiva botones en proceso, muestra indicadores de progreso y notifica el resultado con mensajes descriptivos.
+* **Accesibilidad Innegociable (A11y):**
+  - Contraste de color mínimo WCAG AA (4.5:1 para texto estándar).
+  - Elementos de formulario con etiquetas visibles y asociadas (`htmlFor`/`for`).
+  - Atributos semánticos `aria-label`, `role` y soporte completo de navegación por teclado (`tabindex`, focus visible).
+* **Diseño Responsivo Real:**
+  - Diseña interfaces adaptables desde dispositivos móviles hasta pantallas de alta resolución (Fluid Layouts, Flexbox, Grid, container queries). Guarda preferencias de interfaz (como barras laterales colapsadas) en `localStorage`.
+
+---
+
+## 5. Integración de APIs, Rendimiento y Resiliencia en Cliente
+
+* **Contratos Fuertes con el Backend:**
+  - Maneja de forma explícita la serialización entre cliente y servidor (camelCase vs snake_case).
+  - Valida respuestas en los bordes si la API es externa o dinámica (usando esquemas tipados como Zod).
+* **Rendimiento Web:**
+  - Divide el código por rutas (code-splitting / lazy loading de componentes pesados).
+  - Optimiza el ciclo de renderizado: memoiza transformaciones costosas y evita recreaciones innecesarias de funciones en renders repetitivos.
+* **Resiliencia ante Fallos de Red:**
+  - Maneja tiempos de espera (timeouts), estados offline e implementa reintentos amigables o mecanismos de recuperación para que la aplicación nunca quede en pantalla en blanco.

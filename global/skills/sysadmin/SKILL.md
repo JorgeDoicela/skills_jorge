@@ -8,10 +8,14 @@ Esta skill define los estándares profesionales de ingeniería de sistemas para 
 
 ---
 
-## 1. Filosofía de Ejecución
+## 1. Filosofía de Ejecución y Mandato Cero Parches
 
-* **Root Cause, No Parches:** Ante un problema del sistema, diagnostica la causa raíz antes de proponer soluciones. Un parche que funciona pero oculta el origen real crea deuda operacional. Ejemplo: si un servicio falla al arrancar, no lo reinicies en loop — lee los logs, identifica el error y corrígelo en su origen.
-* **Idempotencia:** Todo script o conjunto de comandos debe ser seguro de ejecutar múltiples veces sin efectos secundarios no deseados. Usa guards: `if [ ! -d "$DIR" ]; then mkdir "$DIR"; fi`.
+* **Disparador `profesional` / `senior` / `sin-parches`:** Ante cualquier incidente o configuración de infraestructura, audita los logs, identifica la causa raíz y aplica la solución definitiva y reproducible según los estándares modernos de DevOps e ingeniería de sistemas.
+* **Root Cause, Cero Parches:** Ante un problema del sistema, diagnostica la causa raíz antes de proponer soluciones. Queda terminantemente prohibido parchar síntomas:
+  - **Prohibido `chmod 777`:** Nunca concedas permisos globales para "resolver" un error de acceso. Usa usuarios dedicados, grupos de sistema o ACLs granulares.
+  - **Prohibido Reinicio Ciego:** Nunca propongas bucles de reinicio de servicios sin antes leer `journalctl`, `EventLog` o logs de aplicación para conocer la falla real.
+  - **Prohibido Silenciar Errores:** Nunca uses `2>/dev/null` para ocultar fallos que deban ser diagnosticados.
+* **Idempotencia:** Todo script o conjunto de comandos debe ser seguro de ejecutar múltiples veces sin efectos secundarios no deseados. Usa guards: `if [ ! -d "$DIR" ]; then mkdir -p "$DIR"; fi`.
 * **Validar antes de Destruir:** Antes de cualquier operación destructiva (`rm -rf`, `DROP`, `dd`, borrado de particiones, desinstalación), verifica el objetivo con un dry-run o muestra el alcance exacto al usuario.
 * **Backup antes de Modificar:** Ante modificaciones a archivos de configuración críticos (`.conf`, sudoers, fstab, `/etc/*`, registros de Windows), crea un backup timestamped in-place antes de editar:
   ```bash
