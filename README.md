@@ -10,6 +10,7 @@ Este repositorio centraliza y organiza la configuración de **Skills** y **Regla
 skills_jorge/
 ├── global/
 │   ├── AGENTS.md                   # Reglas universales de comportamiento, ahorro de tokens y orquestación
+│   ├── memory.md                   # Memoria global estable y persistente (perfil de Jorge y preferencias universales)
 │   └── skills/                     # Skills globales compartidas entre todos los proyectos
 │       ├── ahorro-tokens/          # Restricción de búsquedas y respuestas rápidas
 │       ├── apuntes/                # Notas enriquecidas Markdown/Obsidian, clases, congresos y comandos rápidos
@@ -22,6 +23,7 @@ skills_jorge/
 ├── diitra/
 │   └── .agents/                    # Configuración del workspace específico DIITRA
 │       ├── AGENTS.md               # Stack tecnológico de DIITRA y matriz de combinación de skills
+│       ├── memory.md               # Memoria local persistente de DIITRA (decisiones arquitectónicas consolidadas)
 │       └── skills/
 │           ├── diitra-backend/     # Extensión: convenciones inv_, sigafi (solo lectura), EF Core
 │           └── diitra-frontend/    # Extensión: Yjs, CoWorkField, snake_case, Axios, umbral 700 lineas
@@ -39,6 +41,7 @@ Cuando trabajas en un proyecto (ej. DIITRA), las habilidades operan en **cascada
 flowchart TD
     subgraph global ["1. Capa Global (~/.gemini/config o %USERPROFILE%\.gemini\config)"]
         G_AGENTS["AGENTS.md Global"]
+        G_MEM["memory.md Global"]
         G_BE["desarrollo-backend"]
         G_FE["desarrollo-frontend"]
         G_SEC["datos-seguros"]
@@ -81,8 +84,9 @@ Copia el contenido de `global/` al directorio de configuración global de Gemini
 # Crear directorios si no existen
 New-Item -ItemType Directory -Force -Path "$HOME\.gemini\config\skills"
 
-# Copiar reglas globales AGENTS.md
+# Copiar reglas globales AGENTS.md y memoria global estable
 Copy-Item -Path "global\AGENTS.md" -Destination "$HOME\.gemini\config\AGENTS.md" -Force
+Copy-Item -Path "global\memory.md" -Destination "$HOME\.gemini\config\memory.md" -Force
 
 # Copiar las 7 skills globales
 Copy-Item -Path "global\skills\*" -Destination "$HOME\.gemini\config\skills\" -Recurse -Force
@@ -93,8 +97,9 @@ Copy-Item -Path "global\skills\*" -Destination "$HOME\.gemini\config\skills\" -R
 # Crear directorios si no existen
 mkdir -p ~/.gemini/config/skills
 
-# Copiar reglas globales AGENTS.md
+# Copiar reglas globales AGENTS.md y memoria global estable
 cp global/AGENTS.md ~/.gemini/config/AGENTS.md
+cp global/memory.md ~/.gemini/config/memory.md
 
 # Copiar las 7 skills globales
 cp -r global/skills/* ~/.gemini/config/skills/
