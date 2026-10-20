@@ -22,13 +22,14 @@ Esta habilidad define los estándares profesionales para concebir, estructurar, 
    - La documentación debe reflejar con exactitud matemática y técnica la realidad operativa del código existente. Prohibido documentar funcionalidades hipotéticas, supuestos o código planificado como si estuviera implementado.
 5. **Precisión Quirúrgica (Mínima Modificación):**
    - Ante tareas menores o adiciones puntuales, prohibido reescribir archivos enteros innecesariamente. Actualiza única y exclusivamente los párrafos, tablas, esquemas o diagramas estrictamente impactados por el cambio para preservar el historial y optimizar tokens.
-6. **Mantenimiento del Índice Central:**
-   - Siempre que se agregue, renombre o elimine un archivo `.md`, se debe actualizar el índice principal de la carpeta de documentación (`README.md` dentro del directorio documental) y reflejar cualquier impacto mayor en el `README.md` raíz del proyecto.
+6. **Mantenimiento del Índice Central en la Raíz (Prohibido README dentro de `docs/`):**
+   - Queda estrictamente prohibido crear o colocar archivos `README.md` dentro del directorio `docs/` (o subdirectorios documentales). El árbol documental se organiza de forma pura y exclusiva mediante su taxonomía jerárquica numérica (`01-...`, `02-...`).
+   - El único índice y punto de entrada general del proyecto es el `README.md` ubicado en la raíz del repositorio, el cual debe mantenerse actualizado y enlazar a los módulos correspondientes en `docs/`.
 7. **Libertad Total de Expansión y Cero Límites Artificiales de Tamaño:**
    - El agente tiene plena autonomía y libertad para crear **nuevas carpetas temáticas** (`07-...`, `08-...`, etc.), subdirectorios anidados y **tantos archivos específicos como sean necesarios** para cubrir la totalidad del sistema.
    - **No existen límites de tamaño para los archivos:** Queda prohibido recortar, resumir de forma vaga u omitir detalles técnicos por temor a que un archivo sea muy largo o extenso. Si un componente, API o base de datos requiere 1,000 o más líneas para explicar exhaustivamente tablas de campos, flujos de datos, validaciones y diagramas Mermaid, debe documentarse a fondo con el máximo nivel de detalle profesional.
 8. **Frontera Estricta de la Documentación (Prohibido Tocar Skills):**
-   - El alcance de esta habilidad se limita única y exclusivamente al código fuente del sistema y al directorio de documentación técnica del proyecto (`docs/`, dosieres técnicos, guías y `README.md`).
+   - El alcance de esta habilidad se limita única y exclusivamente al código fuente del sistema y al directorio de documentación técnica del proyecto (`docs/`, dosieres técnicos, guías y el `README.md` raíz).
    - Queda terminantemente prohibido crear, modificar, actualizar o refactorizar archivos de skills o directrices del agente (`.agents/skills/`, `.gemini/skills/`, etc.). Las skills son directrices maestras estables de solo consulta y no forman parte de la documentación viva del proyecto.
 
 ---

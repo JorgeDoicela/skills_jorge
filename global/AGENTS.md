@@ -66,13 +66,16 @@ El agente actúa como un orquestador técnico. **Queda terminantemente prohibido
 
 ## 6. Gestión de Memoria y Contexto Persistente (`memory.md`)
 
-Para evitar la amnesia entre sesiones y mantener coherencia técnica a largo plazo, el agente opera bajo una arquitectura de memoria en dos niveles:
+Para evitar la amnesia entre sesiones y mantener coherencia técnica a largo plazo sin generar ruido en el repositorio ni sobrecargar el contexto, el agente opera bajo una arquitectura de memoria en dos niveles con umbral estricto:
 
 * **Lectura Inicial Obligatoria:**
   - Al iniciar cualquier tarea o sesión, el agente consulta la memoria global (`memory.md` en la configuración del usuario) y la memoria local del proyecto (`.agents/memory.md` si existe) para recuperar preferencias, decisiones arquitectónicas previas y contexto del entorno.
 * **Memoria Global Estable (Protegida entre Dispositivos):**
   - La memoria global (`global/memory.md`) define el perfil universal de Jorge (cero emojis, cero lenguaje inflado, cero parches, pantalla dividida y comandos rápidos).
   - **Política de Estabilidad:** Es de **solo lectura por defecto** para garantizar que permanezca 100% idéntica y sincronizada en todos los equipos del usuario. Solo se modifica si el usuario ordena explícitamente *"actualiza mi memoria global"* o si se versiona conscientemente en el repositorio central.
-* **Memoria de Proyecto Dinámica (Creación y Actualización Obligatoria en `.agents/memory.md`):**
-  - **Creación Automática:** En todo proyecto que disponga de directorio `.agents/`, si el archivo `.agents/memory.md` aún no existe, **el agente está obligado a crearlo de inmediato** con la estructura base (Decisiones Arquitectónicas, Convenciones del Repositorio, Estado y Deuda Técnica, Lecciones Aprendidas).
-  - **Actualización Continua y en el Mismo Turno:** Cada vez que durante la sesión se acuerde o implemente una decisión técnica relevante (nuevo patrón, librería adoptada o descartada, migración de base de datos, asignación de puertos, regla de negocio consolidada o corrección del desarrollador), **el agente debe actualizar quirúrgicamente `.agents/memory.md` antes de cerrar la tarea**. De este modo, el contexto técnico persiste en el repositorio para futuras sesiones sin alterar la configuración de otras máquinas.
+* **Memoria de Proyecto Dinámica (`.agents/memory.md`):**
+  - **Filtro Estricto de No-Actualización (Prohibido Ruido y Memory Churn):** Queda terminantemente prohibido actualizar `.agents/memory.md` por tareas rutinarias de desarrollo, creación de componentes, rutas, estilos, ajustes de UI, pruebas o corrección de bugs menores. **`memory.md` no es un changelog ni un historial de commits.**
+  - **Disparadores Exclusivos de Modificación (Alto Umbral):** Solo se creará o actualizará `.agents/memory.md` bajo dos circunstancias específicas:
+    1. **Decisión Arquitectónica Irreversible o Gotcha Crítico:** Descubrimiento de un efecto secundario o restricción técnica profunda que deba prevenir regresiones graves en futuras sesiones (registrando siempre la causa y justificación técnica).
+    2. **Instrucción Explícita del Desarrollador:** Cuando el usuario indique expresamente *"guarda esto en memoria"*, *"recuerda esto"* o *"actualiza memory.md"*.
+  - **Límite de Extensión:** Debe mantenerse conciso, estructurado y directo (menor a 120 líneas) para evitar la degradación de atención del modelo.
